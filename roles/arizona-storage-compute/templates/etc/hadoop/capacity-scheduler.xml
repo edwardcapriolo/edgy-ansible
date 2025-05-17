@@ -1,0 +1,26 @@
+<configuration>
+
+  <property>
+    <!-- this prevents all from submitting to root queue -->
+    <name>yarn.scheduler.capacity.root.acl_submit_applications</name>
+    <value> </value>
+  </property>
+ 
+  <property>
+    <name>yarn.scheduler.capacity.root.queues</name>
+    <value>{% for item in queueInfo %}{{ item.name }}{% if not loop.last %},{% endif %}{% endfor %}</value>
+  </property>
+
+  {% for item in queueInfo %}
+  <property>
+    <name>yarn.scheduler.capacity.root.{{ item.name }}.acl_submit_applications</name>
+    <value>{% for submit in item.acl_submit %}{{ submit }}{% if not loop.last %},{% endif %}{% endfor %}</value>
+  </property>
+
+  <property>
+    <name>yarn.scheduler.capacity.root.{{ item.name }}.capacity</name>
+    <value>{{ item.capacity }}</value>
+  </property>
+
+  {% endfor %}
+</configuration>

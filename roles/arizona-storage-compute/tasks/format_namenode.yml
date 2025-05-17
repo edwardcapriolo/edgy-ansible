@@ -1,0 +1,7 @@
+# Namenode should be formatted once at the start of its life.
+# the format creates a guid, and some data in the storage directories
+# in zk mode this guid is also used for
+- name: Format namenode
+  command: "{{ apache_hadoop_home }}/{{ apache_hadoop_version}}/bin/hdfs namenode -format"
+  register: result_format
+  failed_when: "'failed' in result_format.stdout"

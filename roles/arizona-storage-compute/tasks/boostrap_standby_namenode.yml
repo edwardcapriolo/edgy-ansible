@@ -1,0 +1,6 @@
+# When installing namenodes in HA mode only one is formatted. The second joins the first using
+# the boostrapStandby command
+- name: Bootstrap namenode in standby
+  command: "{{ apache_hadoop_home }}/{{ apache_hadoop_version}}/bin/hdfs namenode -bootstrapStandby"
+  register: result_boostrap
+  failed_when: "'failed' in result_boostrap.stdout"

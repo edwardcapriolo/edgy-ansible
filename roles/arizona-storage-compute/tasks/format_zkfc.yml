@@ -1,0 +1,8 @@
+# zkfc zookeeper kentucky fried chicken enables HA namenode fail over.
+# the kfc component uses zookeeper to decide the leader. The leader active namenode.
+# this component would not be used in configurations where the namenode is NAS and the fail over is controlled by
+# some other method
+- name: Format zkfc
+  command: "{{ apache_hadoop_home }}/{{apache_hadoop_version}}/bin/hdfs zkfc -formatZK"
+  register: result_zkfc_format
+  failed_when: "'failed' in result_skfc_format.stdout"

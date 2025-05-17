@@ -1,0 +1,38 @@
+apache_hadoop_home: /opt/arizona-storage-compute
+apache_hadoop_version: 3.4.1
+
+apache_hadoop_log_dir: "{{ apache_hadoop_home }}/logs"
+
+#The worst name of all time this is the base directory for all hadoop( Namenodedata etc)
+apache_hadoop_tmp_dir: "{{ apache_hadoop_home }}/var"
+
+# Feature: Simple queue based capacity
+# EdgyCompute Has to start somewhere YARN which has a highly configurable scheduler
+# We provide the ability to create named queues with capcity.
+# In this mode all jobs must be submitted to a queue.
+# In this mode the default queue has no resources and thus can not do tasks
+# This services a primitive control, ie nessus detect you can submit jobs
+# to the default queue.
+# NOTE: the weights do not have sum to 100 for over-subscription, but there will be
+# there would be competition for resources
+queueInfo:
+- name: "priority"
+  capacity: 75
+  acl_submit:
+  - "*"
+- name: "background"
+  capacity: 25
+  acl_submit:
+  - "*"
+
+#For the (namenode,zkfc) and the resource manager to work with zookeeper yarn using SSL
+#
+secure_zookeeper_hadoop_env:
+  enable: true
+  keystore_location:
+  keystore_password:
+  truststore_location:
+  truststore_password:
+  hostname_verification: true
+
+
