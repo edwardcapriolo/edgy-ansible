@@ -17,4 +17,16 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
+
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://{{ dfs_clustername }}</value>
+  </property>
+
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>{{ apache_hadoop_tmp_dir }}</value>
+  </property>
+
+  <!-- do topology script here -->
 </configuration>

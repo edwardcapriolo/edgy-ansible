@@ -1,0 +1,3 @@
+namenodes:
+- { shortname: "fedora" , host: "fedora" }
+

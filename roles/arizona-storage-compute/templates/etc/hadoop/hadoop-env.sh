@@ -446,4 +446,7 @@ HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.trustStore.password={{ secure_zookee
 HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.hostnameVerification={{ secure_zookeeper_hadoop_env.hostname_verification }} "
 {% endif %}
 
+{% for line in hadoop_env_append %}
+{{ line }}
+{% endfor %}
 export HADOOP_OPTS

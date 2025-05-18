@@ -26,7 +26,9 @@ queueInfo:
   - "*"
 
 #For the (namenode,zkfc) and the resource manager to work with zookeeper yarn using SSL
-#
+# we require:
+#    the more standard bits keystores and truststores.
+#    zkclient to use a netty socket and enable the ssl/tls flag
 secure_zookeeper_hadoop_env:
   enable: true
   keystore_location:
@@ -34,5 +36,21 @@ secure_zookeeper_hadoop_env:
   truststore_location:
   truststore_password:
   hostname_verification: true
+
+hadoop_env_append:
+- #hadoop_env_append
+- #unstructored extensibility
+
+namenode:
+  http_port: 9870
+  rpc_port: 8020
+
+# this information could be gathered from a hostgroup but for now we located it here
+#namenodes:
+#- { shortname: "host1" , host: "host1.domain.org" }
+
+#journalnodes:
+#- { host: "host1.domain.org", port: "8485" }
+
 
 

@@ -45,3 +45,8 @@
         dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/capacity-scheduler.xml", mode: '0644' }
     - { src: "etc/hadoop/hadoop-env.sh",
         dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/hadoop-env.sh", mode: '0644' }
+    - { src: "etc/hadoop/core-site.xml",
+        dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/core-site.xml", mode: '0644' }
+    - { src: "etc/hadoop/hdfs-site.xml",
+        dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/hdfs-site.xml", mode: '0644' }
+

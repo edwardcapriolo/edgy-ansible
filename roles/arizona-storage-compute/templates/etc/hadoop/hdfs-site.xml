@@ -18,4 +18,29 @@
 
 <configuration>
 
+<!-- the confiration of hadoop can be very complex primary-secondary primary primary, federated-nn etc. 
+Our goal here is to support N ha namenodes for a single fs, with auto-failover powered by zookeeper -->
+  <property>
+    <name>dfs.nameservices</name>
+    <value>{{ dfs_clustername }}</value>
+  </property>
+
+  <property>
+    <name>dfs.ha.namenodes.{{ dfs_clustername }}</name>
+    <value>{% for node in namenodes %}{{ node['shortname']}}{% if not loop.last %},{% endif %}{% endfor %}</value>
+  </property>
+
+  {% for node in namenodes %}
+  <property>
+    <name>dfs.namenode.http-address.{{ dfs_clustername }}.{{ node['shortname'] }}</name>
+    <value>{{ node['host'] }}:{{ namenode.http_port }}</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.rpc-address.{{ dfs_clustername }}.{{ node['shortname'] }}</name>
+    <value>{{ node['host'] }}:{{ namenode.rpc_port }}</value>
+  </property>
+
+  {% endfor %}
+
 </configuration>
