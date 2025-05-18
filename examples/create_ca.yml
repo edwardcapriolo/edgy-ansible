@@ -1,5 +1,3 @@
-#openssl genrsa -des3 -out myCA.key 2048
-
 - name: Create ca
   hosts: 127.0.0.1
   connection: local
@@ -30,7 +28,11 @@
     - name: display pem
       shell: "openssl x509 -in myCA.pem -noout -text"
       register: pem_out
+      when: not pem_stat.stat.exists
 
+    - name: make crt
+      shell: "openssl x509 -outform der -in myCA.pem -out myCA.crt"
+ 
     - name: debug pem 
       debug:
         var: pem_out

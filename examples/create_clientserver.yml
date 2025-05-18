@@ -1,0 +1,16 @@
+- name: Create ca
+  hosts: 127.0.0.1
+  connection: local
+
+  vars:
+    CLIENT_FQDN: hadoop1.teknek.io
+    CA_PASS_YOU_SET: "ssshhh"
+    CLIENT_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN={{ CLIENT_FQDN }}"
+  tasks:
+    - name: make private key
+      shell: "openssl ecparam -name prime256v1 -genkey -noout -out {{ CLIENT_FQDN }}.key"
+    - name: generate csr
+      shell: "openssl req -new -sha256 -key {{ CLIENT_FQDN }}.key -out {{ CLIENT_FQDN }}.csr -subj \"{{CLIENT_SUB}}\" "
+    - name: create cert
+      shell: "openssl x509 -req -in {{ CLIENT_FQDN }}.csr -CA myCA.crt -CAkey myCA.key -CAcreateserial -out {{ CLIENT_FQDN }}.crt -days 1000 -sha256" 
+
