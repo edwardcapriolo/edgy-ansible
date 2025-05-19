@@ -1,3 +1,6 @@
 namenodes:
 - { shortname: "fedora" , host: "fedora" }
-
+journalnodes:
+- { host: "fedora", port: 8485 }
+zookeeper:
+- { host: "fedora", port: 2182 }

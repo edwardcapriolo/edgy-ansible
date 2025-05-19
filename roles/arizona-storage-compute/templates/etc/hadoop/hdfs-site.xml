@@ -18,11 +18,17 @@
 
 <configuration>
 
+
 <!-- the confiration of hadoop can be very complex primary-secondary primary primary, federated-nn etc. 
 Our goal here is to support N ha namenodes for a single fs, with auto-failover powered by zookeeper -->
   <property>
     <name>dfs.nameservices</name>
     <value>{{ dfs_clustername }}</value>
+  </property>
+
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://{{ dfs_clustername }}</value>
   </property>
 
   <property>
@@ -40,7 +46,41 @@ Our goal here is to support N ha namenodes for a single fs, with auto-failover p
     <name>dfs.namenode.rpc-address.{{ dfs_clustername }}.{{ node['shortname'] }}</name>
     <value>{{ node['host'] }}:{{ namenode.rpc_port }}</value>
   </property>
-
   {% endfor %}
+
+
+
+  <!-- In the arizona configuration. N journal nodes for redundancy -->
+  <property>
+    <name>dfs.journalnode.edits.dir</name>
+    <value>{{ apache_hadoop_tmp_dir }}/dfs/journalnode</value>
+  </property>
+
+  <property>
+    <!-- the string looks qjournal://node1:8485;node2:8485/mycluster (where mycluster is the fs name hdfs://mycluster -->
+    <name>dfs.namenode.shared.edits.dir</name>
+    <value>qjournal://{% for node in journalnodes %}{{ node['host'] }}:{{ node['port'] }}{% if not loop.last %};{% endif %}{% endfor %}/{{dfs_clustername }}</value>
+  </property>
+
+  <!-- In the arizona configuration. zk + zkfc -->
+  <property>
+    <name>dfs.ha.automatic-failover.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>ha.zookeeper.quorum</name>
+    <value>{% for node in zookeeper %}{{ node.host }}:{{ node.port }}{% if not loop.last %},{% endif %}{% endfor %}</value>
+  </property>
+
+  <property>
+    <name>dfs.ha.fencing.methods</name>
+    <value>shell(/bin/true)</value>
+  </property>
+
+  <property>
+    <name>dfs.client.failover.proxy.provide.{{ dfs_clustername }}</name>
+    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+  </property>
 
 </configuration>

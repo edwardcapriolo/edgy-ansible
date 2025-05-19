@@ -38,19 +38,24 @@ secure_zookeeper_hadoop_env:
   hostname_verification: true
 
 hadoop_env_append:
-- #hadoop_env_append
-- #unstructored extensibility
+- "#hadoop_env_append"
+- "#unstructored extensibility"
 
 namenode:
   http_port: 9870
   rpc_port: 8020
 
-# this information could be gathered from a hostgroup but for now we located it here
+# this information here builds the hdfs-site.xml. It does not cause namenode process to start on the node
 #namenodes:
-#- { shortname: "host1" , host: "host1.domain.org" }
+#shortname is effectively an id used in the the configuration files, where host represents an actual fqdn and network routable entity
+#- { shortname: "host1", host: "host1.domain.org" }
 
 #journalnodes:
 #- { host: "host1.domain.org", port: "8485" }
+
+# 2182 is the secure port
+#zookeeper:
+#- { host: "fedora", port: 2182 }
 
 
 
