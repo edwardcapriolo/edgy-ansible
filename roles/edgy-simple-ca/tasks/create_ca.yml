@@ -1,0 +1,34 @@
+
+- name: stat ca
+  stat:
+    path: files/myCA.key
+  register: ca_stat
+
+- name: generate ca
+  shell: "openssl genrsa -des3 -out {{ edgy_simple_file_root }}/myCA.key -passout pass:{{ CA_PASS_YOU_SET }} 2048"
+  when: not ca_stat.stat.exists
+
+- name: stat root
+  stat:
+    path: myCA.pem
+  register: pem_stat
+
+## todo requires interactive password
+- name: root ca
+  shell: "openssl req -x509 -new -nodes -key {{ edgy_simple_file_root }}/myCA.key -sha256 -days 1825 -out {{ edgy_simple_file_root }}/myCA.pem  -subj \"{{ CA_SUB }}\" "
+  when: not pem_stat.stat.exists
+
+- name: display pem
+  shell: "openssl x509 -in {{ edgy_simple_file_root }}/myCA.pem -noout -text"
+  register: pem_out
+  when: not pem_stat.stat.exists
+
+- name: make crt
+  shell: "openssl x509 -outform der -in {{ edgy_simple_file_root }}/myCA.pem -out {{ edgy_simple_file_root }}/myCA.crt"
+
+- name: debug pem
+  debug:
+    var: pem_out
+
+- name: jks trustore
+  shell: "keytool -import -alias myCA -file {{ edgy_simple_file_root }}/myCA.crt -keystore myTruststore.jks -storepass {{ CA_PASS_YOU_SET }} -noprompt"

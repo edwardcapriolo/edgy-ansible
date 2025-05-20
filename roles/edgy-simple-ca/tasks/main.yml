@@ -1,0 +1,2 @@
+- name: wrapper task
+  import_tasks: "{{ operation }}.yml"

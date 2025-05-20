@@ -1,3 +1,11 @@
+#edgy-simple-local-ca
+edgy_simple_file_root: /home/edward/edgy-ansible/roles/edgy-simple-ca/files
+CA_PASS_YOU_SET: "itssecret"
+CA_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN=teknek.io"
+
+
+
+
 apache_hadoop_home: /home/edgy/arizona-storage-compute
 #Consider renaming this variable to fs.defaultFS 
 dfs_clustername: fs_abc
@@ -9,3 +17,5 @@ keystore_password: ssshhh
 
 truststore_location: myTruststore.jks
 truststore_password: itssecret
+
+

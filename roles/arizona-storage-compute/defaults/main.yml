@@ -47,7 +47,7 @@ namenode:
 
 # this information here builds the hdfs-site.xml. It does not cause namenode process to start on the node
 #namenodes:
-#shortname is effectively an id used in the the configuration files, where host represents an actual fqdn and network routable entity
+#shortname is effectively an id used in the configuration files, host represents an actual fqdn routable entity
 #- { shortname: "host1", host: "host1.domain.org" }
 
 #journalnodes:
