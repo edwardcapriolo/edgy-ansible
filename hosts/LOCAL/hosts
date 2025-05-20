@@ -1,2 +1,5 @@
 [arizona_storage_compute]
-localhost
+fedora
+
+[arizona_keeper]
+fedora

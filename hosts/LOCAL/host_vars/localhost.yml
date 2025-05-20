@@ -1,3 +1,0 @@
-apache_hadoop_home: /home/edgy/arizona-storage-compute
-#Consider renaming this variable to fs.defaultFS 
-dfs_clustername: fs_abc

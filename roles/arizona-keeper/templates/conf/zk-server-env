@@ -1,0 +1,8 @@
+SL_JVM_FLAGS="-Dzookeeper.serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory \
+-Dzookeeper.ssl.keyStore.location=hadoop1.teknek.io.jks \
+-Dzookeeper.ssl.keyStore.password=ssshhh \
+-Dzookeeper.ssl.trustStore.location=myTruststore.jks \
+-Dzookeeper.ssl.trustStore.password=itssecret \
+-Dzookeeper.ssl.endpoint.identification.algorithm=false "
+
+export SERVER_JVMFLAGS="${SERVER_JVMFLAGS} ${SSL_JVM_FLAGS}"

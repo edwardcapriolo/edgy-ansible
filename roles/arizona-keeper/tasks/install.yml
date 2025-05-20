@@ -1,0 +1,45 @@
+- name: Create application heirarchy
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0775
+  with_items:
+    - '{{ apache_zookeeper_home }}'
+    - '{{ apache_zookeeper_log_dir }}'
+
+- name: fetch and extract artifacts
+  block:
+    - name: check if base package exists
+      stat:
+        path: "{{ apache_zookeeper_home }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin"
+      register: stat_result
+    - name: download package
+      get_url:
+        url: "https://archive.apache.org/dist/zookeeper/zookeeper-{{ apache_zookeeper_version }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin.tar.gz"
+        dest: "{{ apache_zookeeper_home }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin.tar.gz"
+        tmp_dest: "/tmp"
+      when: stat_result.stat.exists == False
+    - name: extract package
+      unarchive:
+        src: "{{ apache_zookeeper_home }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin.tar.gz"
+        dest: "{{ apache_zookeeper_home }}"
+        copy: no
+        exclude: [ "conf" ]
+      when: stat_result.stat.exists == False
+
+- name: Create conf
+  file:
+    path: "{{ apache_zookeeper_home }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf"
+    state: directory
+    mode: 0775
+
+- name: template conf
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ apache_zookeeper_home }}/{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "conf/zoo.cfg",
+        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf/zoo.cfg", mode: '0644' }
+    - { src: "conf/zk_server-env.sh",
+        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/zk_server-env.sh", mode: '0740' }

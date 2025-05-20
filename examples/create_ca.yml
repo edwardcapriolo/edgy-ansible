@@ -36,3 +36,6 @@
     - name: debug pem 
       debug:
         var: pem_out
+ 
+    - name: jks trustore
+      shell: "keytool -import -alias myCA -file myCA.crt -keystore myTruststore.jks -storepass {{ CA_PASS_YOU_SET }} -noprompt 

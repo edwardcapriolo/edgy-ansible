@@ -13,4 +13,8 @@
       shell: "openssl req -new -sha256 -key {{ CLIENT_FQDN }}.key -out {{ CLIENT_FQDN }}.csr -subj \"{{CLIENT_SUB}}\" "
     - name: create cert
       shell: "openssl x509 -req -in {{ CLIENT_FQDN }}.csr -CA myCA.crt -CAkey myCA.key -CAcreateserial -out {{ CLIENT_FQDN }}.crt -days 1000 -sha256" 
-
+#openssl pkcs12 -export -in abc.crt -inkey abc.key -out abc.p12
+    - name: create p12
+      shell: "openssl pkcs12 -export -in {{ CLIENT_FQDN }}.crt -inkey {{ CLIENT_FQDN }}.key -out {{ CLIENT_FQDN }}.p12"
+    - name: create jks
+      shell: "echo keytool -importkeystore -srckeystore {{ CLIENT_FQDN }}.p12 -srcstoretype PKCS12 -destkeystore {{ CLIENT_FQDN }}.jks -deststoretype JKS"

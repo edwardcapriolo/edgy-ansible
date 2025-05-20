@@ -1,0 +1,8 @@
+apache_zookeeper_home: /opt/arizona-keeper
+apache_zookeeper_version: 3.9.3
+apache_zookeeper_log_dir: "{{ apache_zookeeper_home }}/logs"
+
+zookeeper_data_dir: "{{ apache_zookeeper_home }}/var"
+
+zookeeper_client_port: 2181
+zookeeper_secure_client_port: 2182
