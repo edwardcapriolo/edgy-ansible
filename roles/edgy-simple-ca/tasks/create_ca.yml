@@ -31,4 +31,4 @@
     var: pem_out
 
 - name: jks trustore
-  shell: "keytool -import -alias myCA -file {{ edgy_simple_file_root }}/myCA.crt -keystore myTruststore.jks -storepass {{ CA_PASS_YOU_SET }} -noprompt"
+  shell: "keytool -import -alias myCA -file {{ edgy_simple_file_root }}/myCA.crt -keystore {{ edgy_simple_file_root }}/myTruststore.jks -storepass {{ CA_PASS_YOU_SET }} -noprompt"
