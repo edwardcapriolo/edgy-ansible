@@ -1,0 +1,31 @@
+#vars:
+#  CLIENT_FQDN: hadoop1.teknek.io
+#  CA_PASS_YOU_SET: "ssshhh"
+#  CLIENT_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN={{ CLIENT_FQDN }}"
+#tasks:
+- name: make private key
+  shell: >
+    openssl ecparam -name prime256v1 -genkey -noout 
+    -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key
+- name: generate csr
+  shell: >
+    openssl req -new -sha256 -key {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key 
+    -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.csr -subj "{{CLIENT_SUB}}"
+- name: create cert
+  shell: >
+    openssl x509 -req -in {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.csr 
+    -CA {{ edgy_simple_file_root }}/myCA.crt -CAkey {{ edgy_simple_file_root }}/myCA.key 
+    -CAcreateserial -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.crt -days 1000 -sha256
+- name: create p12
+  shell: >
+    openssl pkcs12 -export -in {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.crt 
+    -inkey {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key 
+    -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.p12
+- name: create jks
+  shell: >
+    echo keytool -importkeystore -srckeystore {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.p12 
+    -srcstoretype PKCS12 -destkeystore {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.jks -deststoretype JKS
+  register: out
+- name: run this
+  debug:
+    var: out

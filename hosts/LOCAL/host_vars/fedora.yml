@@ -4,10 +4,13 @@ CA_PASS_YOU_SET: "itssecret"
 CA_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN=teknek.io"
 
 
+CLIENT_FQDN: fedora
+CLIENT_PASS_YOU_SET: "ssshhh"
+CLIENT_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN={{ CLIENT_FQDN }}"
+
 
 
 apache_hadoop_home: /home/edgy/arizona-storage-compute
-#Consider renaming this variable to fs.defaultFS 
 dfs_clustername: fs_abc
 
 apache_zookeeper_home: /home/edgy/arizona-keeper
