@@ -1,6 +1,6 @@
-ZK_KEYSTORE_LOCATION={{ keystore_location }}
+ZK_KEYSTORE_LOCATION=../conf/{{ keystore_location }}
 ZK_KEYSTORE_PASSWORD={{ keystore_password }}
-ZK_TRUSTSTORE_LOCATION={{ truststore_location }}
+ZK_TRUSTSTORE_LOCATION=../conf/{{ truststore_location }}
 ZK_TRUSTSTORE_PASSWORD={{ truststore_password }}
 
 SSL_JVM_FLAGS="-Dzookeeper.serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory \

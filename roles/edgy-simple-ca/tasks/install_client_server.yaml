@@ -1,0 +1,8 @@
+- name:
+  copy:
+    src: "files/{{ client_server_file }}.p12"
+    dest: "{{ ca_directory }}/{{ client_server_file }}.p12"
+- name:
+  copy:
+    src: "files/{{ client_server_file }}.jks"
+    dest: "{{ ca_directory }}/{{ client_server_file }}.jks"
