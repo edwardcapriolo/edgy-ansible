@@ -1,0 +1,2 @@
+- name: inspect server
+  shell: "keytool -printcert -sslserver {{ host }}:{{ port }}"

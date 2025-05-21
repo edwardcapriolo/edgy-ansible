@@ -1,7 +1,7 @@
-# edgy-simple-local-ca
+# edgy-simple-ca
 
-This CA is not for production, there are other better ansible roles
-and many organizations have better systems. The purpose of the role is
+This role is not for production, there are other better ansible roles
+and many organizations that have better systems. The purpose of the role is
 to create material used to launch other components using PKI as an identity
 and TLS whenever possible.
 
@@ -19,8 +19,8 @@ or environment variables, and keys themselves have to be placed in directories.
 
 We will do the best we can for a simple/sane implementation. We wish edgy to
 give "production grade" setup of things, but we can not head on 
-address the complexites of pki/vault implementation. Thus
-we hide aware the complexites in some cases to focus on
+address the complexity of pki/vault implementation. Thus
+we hide aware the complexity in some cases to focus on
 "working software"
 
 ### Prerequisites
