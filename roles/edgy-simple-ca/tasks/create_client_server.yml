@@ -1,33 +1,30 @@
-#  CLIENT_FQDN: hadoop1.teknek.io
-#  CA_PASS_YOU_SET: "ssshhh"
+#  CLIENT_FQDN: fedora
+#  CLIENT_PASS_YOU_SET: "ssshhh"
 #  CLIENT_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN={{ CLIENT_FQDN }}"
-- name: make private key
+- name: Step1 make private key
   shell: >
-    openssl ecparam -name prime256v1 -genkey -noout 
-    -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key
-  register: make_private_key
-- name: debug make private
-  debug:
-    var: make_private_key
-- name: generate csr
+    openssl ecparam -name prime256v1 -genkey -noout -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key
+
+- name: Step2 generate certificate signing request
   shell: >
     openssl req -new -sha256 -key {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key 
-    -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.csr -subj "{{CLIENT_SUB}}"
-- name: create cert
+    -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.csr -subj "{{ CLIENT_SUB }}"
+
+- name: Step3 CA executes the signing request
   shell: >
     openssl x509 -req -in {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.csr 
     -CA {{ edgy_simple_file_root }}/myCA.crt -CAkey {{ edgy_simple_file_root }}/myCA.key 
-    -CAcreateserial -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.crt -days 1000 -sha256
-- name: create p12
+    -passin pass:{{ CA_PASS_YOU_SET }} -CAcreateserial -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.crt -days 1000 -sha256
+
+- name: Step4 create p12 from crt
   shell: >
     openssl pkcs12 -export -in {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.crt 
     -inkey {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key 
-    -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.p12
-- name: create jks
+    -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.p12 
+    -passout pass:{{ CLIENT_PASS_YOU_SET }}
+
+- name: Step5 create jks from p12
   shell: >
-    echo keytool -importkeystore -srckeystore {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.p12 
-    -srcstoretype PKCS12 -destkeystore {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.jks -deststoretype JKS
-  register: out
-- name: run this
-  debug:
-    var: out
+    keytool -importkeystore -srckeystore {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.p12 
+    -srcstoretype PKCS12 -destkeystore {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.jks 
+    -deststoretype JKS -deststorepass {{ CLIENT_PASS_YOU_SET }} -srcstorepass {{ CLIENT_PASS_YOU_SET }}
