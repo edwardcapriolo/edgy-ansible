@@ -26,9 +26,49 @@ we hide aware the complexity in some cases to focus on
 ### Prerequisites
 
 - Openssl tools
+- keytool java
 
+### steps
 
+Generate a CA only once
+```
+sh examples/install-edgy-ca.sh 
+```
 
+Then generate a client from the CA
 
+```
+sh examples/install-edgy-client.sh
+```
+
+You should see a bunch of files inside the fileserver
+
+```declarative
+edward@fedora:~/edgy-ansible$ ls roles/edgy-simple-ca/files/
+fedora.crt  fedora.key  myCA.crt  myCA.p12  myCA.srl
+fedora.csr  fedora.p12  myCA.key  myCA.pem  myTruststore.jks
+
+```
+Zookeeper uses PKI so it is good simple test
+
+```
+sh examples/install-keeper.sh
+```
+
+It cant be started like so:
+```
+ssh edgy@localhost
+cd /home/edgy/arizona-keeper/apache-zookeeper-3.9.3-bin/bin
+./arizona-keeper-zkServer.sh start-foreground
+
+```
+
+Watch for sneaky messages like this in the logs
+```
+20:00:58.814 [main] ERROR org.apache.zookeeper.server.auth.X509AuthenticationProvider - Failed to create trust manager
+org.apache.zookeeper.common.X509Exception$TrustManagerException: java.io.IOException: keystore password was incorrect
+	at org.apache.zookeeper.common.X509Util.createTrustManager(X509Util.java:612)
+
+```
 
 

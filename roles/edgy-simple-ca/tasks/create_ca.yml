@@ -4,8 +4,10 @@
     path: files/myCA.key
   register: ca_stat
 
-- name: generate ca
-  shell: "openssl genrsa -des3 -out {{ edgy_simple_file_root }}/myCA.key -passout pass:{{ CA_PASS_YOU_SET }} 2048"
+- name: generate private key for root ca
+  shell: >
+    openssl genrsa -des3 -out {{ edgy_simple_file_root }}/myCA.key 
+    -passout pass:{{ CA_PASS_YOU_SET }} 2048
   when: not ca_stat.stat.exists
 
 - name: stat root
@@ -14,8 +16,10 @@
   register: pem_stat
 
 ## todo requires interactive password
-- name: root ca
-  shell: "openssl req -x509 -new -nodes -key {{ edgy_simple_file_root }}/myCA.key -sha256 -days 1825 -out {{ edgy_simple_file_root }}/myCA.pem  -subj \"{{ CA_SUB }}\" "
+- name: root certificate
+  shell: >
+    openssl req -x509 -new -nodes -key {{ edgy_simple_file_root }}/myCA.key 
+    -sha256 -days 1825 -out {{ edgy_simple_file_root }}/myCA.pem  -subj "{{ CA_SUB }}"
   when: not pem_stat.stat.exists
 
 - name: display pem
@@ -24,11 +28,22 @@
   when: not pem_stat.stat.exists
 
 - name: make crt
-  shell: "openssl x509 -outform der -in {{ edgy_simple_file_root }}/myCA.pem -out {{ edgy_simple_file_root }}/myCA.crt"
+  shell: >
+    openssl x509 -outform der -in {{ edgy_simple_file_root }}/myCA.pem 
+    -out {{ edgy_simple_file_root }}/myCA.crt
+
+- name: root ca as p12
+  shell: >
+    openssl pkcs12 -export -in {{ edgy_simple_file_root }}/myCA.crt
+    -inkey {{ edgy_simple_file_root }}/myCA.key
+    -out {{ edgy_simple_file_root }}/myCA.p12
 
 - name: debug pem
   debug:
     var: pem_out
 
-- name: jks trustore
-  shell: "keytool -import -alias myCA -file {{ edgy_simple_file_root }}/myCA.crt -keystore {{ edgy_simple_file_root }}/myTruststore.jks -storepass {{ CA_PASS_YOU_SET }} -noprompt"
+- name: jks truststore
+  shell: >
+    keytool -import -alias myCA -file {{ edgy_simple_file_root }}/myCA.crt 
+    -keystore {{ edgy_simple_file_root }}/myTruststore.jks 
+    -storepass {{ CA_PASS_YOU_SET }} -noprompt

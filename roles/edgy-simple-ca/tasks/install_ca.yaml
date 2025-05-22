@@ -6,3 +6,7 @@
   copy:
     src: files/myTruststore.jks
     dest: "{{ ca_directory }}/myTruststore.jks"
+##- name:
+##  copy:
+##    src: files/myCA.p12
+##    dest: "{{ ca_directory }}/myCA.p12"

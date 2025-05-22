@@ -1,12 +1,14 @@
-#vars:
 #  CLIENT_FQDN: hadoop1.teknek.io
 #  CA_PASS_YOU_SET: "ssshhh"
 #  CLIENT_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN={{ CLIENT_FQDN }}"
-#tasks:
 - name: make private key
   shell: >
     openssl ecparam -name prime256v1 -genkey -noout 
     -out {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key
+  register: make_private_key
+- name: debug make private
+  debug:
+    var: make_private_key
 - name: generate csr
   shell: >
     openssl req -new -sha256 -key {{ edgy_simple_file_root }}/{{ CLIENT_FQDN }}.key 

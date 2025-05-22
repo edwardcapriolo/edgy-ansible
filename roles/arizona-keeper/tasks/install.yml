@@ -45,6 +45,11 @@
         dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-server-env.sh", mode: '0740' }
     - { src: "bin/arizona-keeper-zkServer.sh",
         dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-zkServer.sh", mode: '0740' }
+    - { src: "bin/arizona-keeper-client-env.sh",
+        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-client-env.sh", mode: '0740' }
+    - { src: "bin/arizona-keeper-zkCli.sh",
+        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-zkCli.sh", mode: '0740' }
+
 
 - name: get truststore
   include_role:

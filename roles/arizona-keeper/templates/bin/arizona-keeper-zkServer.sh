@@ -1,2 +1,2 @@
-source arizona-keeper-server-env.sh
+source ./arizona-keeper-server-env.sh
 ./zkServer.sh "$@"

@@ -15,10 +15,10 @@ dfs_clustername: fs_abc
 
 apache_zookeeper_home: /home/edgy/arizona-keeper
 
-keystore_location: fedora.jks
-keystore_password: ssshhh
+keystore_location: "fedora.jks"
+keystore_password: "ssshhh"
 
-truststore_location: myTruststore.jks
-truststore_password: itssecret
+truststore_location: "myTruststore.jks"
+truststore_password: "itssecret"
 
 
