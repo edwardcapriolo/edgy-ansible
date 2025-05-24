@@ -21,4 +21,7 @@ keystore_password: "ssshhh"
 truststore_location: "myTruststore.jks"
 truststore_password: "itssecret"
 
-
+hadoop_env_append:
+  - "export JAVA_HOME=/usr"
+# Controls the system use that can run the namenode
+  - "export HDFS_NAMENODE_USER=edgy"

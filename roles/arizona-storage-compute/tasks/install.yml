@@ -35,6 +35,21 @@
     state: directory
     mode: 0775
 
+- name: get truststore
+  include_role:
+    name: edgy-simple-ca
+    tasks_from: install_ca
+  vars:
+    ca_directory: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop"
+
+- name: install client/server certificate material
+  include_role:
+    name: edgy-simple-ca
+    tasks_from: install_client_server
+  vars:
+    ca_directory: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop"
+    client_server_file: "{{ inventory_hostname }}"
+
 - name: template etc
   template:
     src: "{{ item.src }}"
@@ -49,4 +64,5 @@
         dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/core-site.xml", mode: '0644' }
     - { src: "etc/hadoop/hdfs-site.xml",
         dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/hdfs-site.xml", mode: '0644' }
-
+    - { src: "etc/hadoop/log4j.properties",
+        dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/log4j.properties", mode: '0644' }

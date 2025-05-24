@@ -19,4 +19,5 @@ No shame in my game. I don't know ansible galaxy. Send a PR
 
 The focus for edgy isn't  "packaging". Over 20 years I have used
 rpm/shellscripts/radmind/Puppet/Ansible/Shell scripts/Jib Plugin/apko/teraform everyone has great opinions on what 
-the best system to do something is. Thats great, when I get some cycles I will look into how the ansible could be used in docker build or how the plays can go into k8s operators
+the best system to do something is. Thats great, when I get some cycles I will look into how the ansible could be used 
+in docker build or how the plays can go into k8s operators. 

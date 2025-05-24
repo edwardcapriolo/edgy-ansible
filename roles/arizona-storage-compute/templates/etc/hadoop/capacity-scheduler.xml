@@ -21,6 +21,5 @@
     <name>yarn.scheduler.capacity.root.{{ item.name }}.capacity</name>
     <value>{{ item.capacity }}</value>
   </property>
-
   {% endfor %}
 </configuration>
