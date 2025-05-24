@@ -1,22 +1,13 @@
 # edgy-simple-ca
 
-This role is not for production, there are other better ansible roles
-and many organizations that have better systems. The purpose of the role is
-to create material used to launch other components using PKI as an identity
-and TLS whenever possible.
-
-PKI is a usually a service that is "locked" down as the material generated.
-Controls a majority of cryptography and identity for organizations. Implementations
-vary drastically. 
+This role is not for production, because it doesn't put passwords in a vault or keep the key materials in a safe place. 
+The purpose of the role is to create material used to launch other components using PKI as an identity
+and TLS whenever possible. This is for use in the "playground" of other roles in this playbook. However there is nothing
+expressly wrong with the play as it generates materials in a reporoducable way.
 
 If you want to submit a better role I am all for it.
 
 # implementation notes
-It is very hard to ansible this 'clean' as you generally have to
-weave the PKI information in at multiple levels of each application
-passwords and shell scripts have to weave there way into config files
-or environment variables, and keys themselves have to be placed in directories.
-
 We will do the best we can for a simple/sane implementation. We wish edgy to
 give "production grade" setup of things, but we can not head on 
 address the complexity of pki/vault implementation. Thus,
@@ -29,6 +20,24 @@ we hide aware the complexity in some cases to focus on
 - keytool java
 
 ### steps
+
+Create some settings. We chose hosts/LOCAL/host_vars. 
+
+Note: for PKI/SSL/TLS hostnames are important. For example, "host verification" will fail if the hostname does not 
+match the DNS etc. In this example "fedora" is physically the name of my laptop.
+
+```
+
+edgy_simple_file_root: /home/edward/edgy-ansible/roles/edgy-simple-ca/files
+CA_PASS_YOU_SET: "itssecret"
+CA_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN=teknek.io"
+#This should not be the same password as the CRT as it only protects "shareable" information of the truststore
+CA_TRUSTSTORE_PASSWORD: "itssecret"
+
+CLIENT_FQDN: fedora
+CLIENT_PASS_YOU_SET: "ssshhh"
+CLIENT_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN={{ CLIENT_FQDN }}"
+```
 
 Generate a CA only once
 ```
@@ -70,4 +79,9 @@ org.apache.zookeeper.common.X509Exception$TrustManagerException: java.io.IOExcep
 
 ```
 
+We also have baked a CLI to use the secure zookeeper port
 
+```
+home/edgy/arizona-keeper/apache-zookeeper-3.9.3-bin/bin
+./arizona-keeper-zkCli.sh -server fedora:2182
+```
