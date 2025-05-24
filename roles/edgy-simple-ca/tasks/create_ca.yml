@@ -44,5 +44,5 @@
   shell: >
     keytool -import -alias myCA -file {{ edgy_simple_file_root }}/myCA.crt 
     -keystore {{ edgy_simple_file_root }}/myTruststore.jks -deststoretype jks 
-    -storepass {{ CA_PASS_YOU_SET }} -noprompt
+    -storepass {{ CA_TRUSTSTORE_PASSWORD }} -noprompt
     

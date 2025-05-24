@@ -42,7 +42,7 @@ To achieve full redundancy at-least 3 systems are required:
 
 - 3x zookeeper
 - 2x namenode (+zkfc)
-- 3x journalnode
+- 3x journalnode : See https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html
 - 2x datanode
 - 2x nodemanager
 

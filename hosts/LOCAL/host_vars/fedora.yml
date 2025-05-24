@@ -2,12 +2,12 @@
 edgy_simple_file_root: /home/edward/edgy-ansible/roles/edgy-simple-ca/files
 CA_PASS_YOU_SET: "itssecret"
 CA_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN=teknek.io"
-
+#This should not be the same password as the CRT as it only protects "shareable" information of the truststore
+CA_TRUSTSTORE_PASSWORD: "itssecret"
 
 CLIENT_FQDN: fedora
 CLIENT_PASS_YOU_SET: "ssshhh"
 CLIENT_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN={{ CLIENT_FQDN }}"
-
 
 
 apache_hadoop_home: /home/edgy/arizona-storage-compute

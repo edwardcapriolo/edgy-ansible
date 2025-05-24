@@ -19,7 +19,7 @@ or environment variables, and keys themselves have to be placed in directories.
 
 We will do the best we can for a simple/sane implementation. We wish edgy to
 give "production grade" setup of things, but we can not head on 
-address the complexity of pki/vault implementation. Thus
+address the complexity of pki/vault implementation. Thus,
 we hide aware the complexity in some cases to focus on
 "working software"
 
@@ -41,13 +41,12 @@ Then generate a client from the CA
 sh examples/install-edgy-client.sh
 ```
 
-You should see a bunch of files inside the fileserver
+You should see a bunch of files inside the role's file directory:
 
-```declarative
+```
 edward@fedora:~/edgy-ansible$ ls roles/edgy-simple-ca/files/
 fedora.crt  fedora.key  myCA.crt  myCA.p12  myCA.srl
 fedora.csr  fedora.p12  myCA.key  myCA.pem  myTruststore.jks
-
 ```
 Zookeeper uses PKI so it is good simple test
 
@@ -55,7 +54,7 @@ Zookeeper uses PKI so it is good simple test
 sh examples/install-keeper.sh
 ```
 
-It cant be started like so:
+Start zookeeper in the foreground. HINT: use more to watch the startup.
 ```
 ssh edgy@localhost
 cd /home/edgy/arizona-keeper/apache-zookeeper-3.9.3-bin/bin
