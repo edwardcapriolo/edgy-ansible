@@ -6,3 +6,5 @@ zookeeper_data_dir: "{{ apache_zookeeper_home }}/var"
 
 zookeeper_client_port: 2181
 zookeeper_secure_client_port: 2182
+follower_port: 2888
+leader_election_port: 3888

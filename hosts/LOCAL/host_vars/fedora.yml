@@ -14,6 +14,7 @@ apache_hadoop_home: /home/edgy/arizona-storage-compute
 dfs_clustername: fs_abc
 
 apache_zookeeper_home: /home/edgy/arizona-keeper
+zk_id: 1
 
 keystore_location: "fedora.jks"
 keystore_password: "ssshhh"
