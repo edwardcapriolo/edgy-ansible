@@ -33,6 +33,11 @@
     state: directory
     mode: 0775
 
+- name: template myid
+  template:
+    src: conf/myid
+    dest: "{{ zookeeper_data_dir }}/myid"
+
 - name: template conf
   template:
     src: "{{ item.src }}"
