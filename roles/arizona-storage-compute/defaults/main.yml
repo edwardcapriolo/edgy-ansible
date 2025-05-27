@@ -57,5 +57,7 @@ namenode:
 #zookeeper:
 #- { host: "fedora", port: 2182 }
 
+namenode_personality: false
+journalnode_personality: false
 
 
