@@ -10,8 +10,7 @@ CLIENT_PASS_YOU_SET: "ssshhh"
 CLIENT_SUB: "/C=US/ST=New York/L=New York/O=arizone cert/OU=arizona unit/CN={{ CLIENT_FQDN }}"
 
 
-apache_hadoop_home: /home/edgy/arizona-storage-compute
-dfs_clustername: fs_abc
+
 
 apache_zookeeper_home: /home/edgy/arizona-keeper
 zk_id: 1
@@ -22,7 +21,13 @@ keystore_password: "ssshhh"
 truststore_location: "myTruststore.jks"
 truststore_password: "itssecret"
 
+
+apache_hadoop_home: /home/edgy/arizona-storage-compute
+dfs_clustername: fs_abc
+
 hadoop_env_append:
   - "export JAVA_HOME=/usr"
 # Controls the system use that can run the namenode
   - "export HDFS_NAMENODE_USER=edgy"
+
+journalnode_personality: True

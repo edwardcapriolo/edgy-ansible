@@ -56,8 +56,25 @@ dedicated hardware and more generous CPU/RAM allocations
 
 # Getting started
 
+Let's define the 'fake distributed' setup. All the components are running in different processes. All processes are 
+running on a single host. Each component that would normally be setup (2x or 3x) in a true environment is running 1x.
+
+Inside the hosts/LOCAL/fedora.yml
+
+```
+apache_hadoop_home: /home/edgy/arizona-storage-compute
+dfs_clustername: fs_abc
+
+hadoop_env_append:
+  - "export JAVA_HOME=/usr"
+# Controls the system use that can run the namenode
+  - "export HDFS_NAMENODE_USER=edgy"
+
+journalnode_personality: True
+```
+
 ### 
-```declarative
+```
 edward@fedora:~/edgy-ansible$ sh examples/install-arizona-storage-compute.sh
 ...
 TASK [arizona-storage-compute : template etc] ***************************************************************************************************************************
@@ -69,8 +86,19 @@ ok: [fedora] => (item={'src': 'etc/hadoop/log4j.properties', 'dest': 'hadoop-3.4
 
 PLAY RECAP **************************************************************************************************************************************************************
 fedora                     : ok=12   changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0
+```
+
+After the initial prep we should be able to kick up all components from a single script.
+```declarative
+edward@fedora:~/edgy-ansible$ sh examples/start-arizona-storage-compute.sh
+PLAY [arizona_storage_compute] ******************************************************************************************************************************************
+PLAY RECAP **************************************************************************************************************************************************************
+...
+fedora                     : ok=3    changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0  
 
 ```
+
+
 
 ### starting journalnode
 

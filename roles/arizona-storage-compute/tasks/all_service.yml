@@ -1,19 +1,19 @@
 # Each node may be configured to run a number of different personalities (namenode, jounalnode,etc).
 # If applicable this attempts to operate on all of them
 - name: Service Namenode
-  shell: "{{ apache_hadoop_home }}/hdfs.init {{ service_command }} namenode"
+  shell: "{{ apache_hadoop_home }}/arizona-hdfs-init.sh {{ service_command }} namenode"
   ignore_errors: no
-  when: namenode_personality == 'true'
+  when: namenode_personality == True
 
 - name: Service zkfc
-  shell: "{{ apache_hadoop_home }}/hdfs.init {{ service_command }} zkfc"
+  shell: "{{ apache_hadoop_home }}/arizona-hdfs-init.sh {{ service_command }} zkfc"
   ignore_errors: no
-  when: namenode_personality == 'true'
+  when: namenode_personality == True
 
 - name: Service Journalnode
-  shell: "{{ apache_hadoop_home }}/hdfs.init {{ service_command }} journalnode"
+  shell: "{{ apache_hadoop_home }}/arizona-hdfs-init.sh {{ service_command }} journalnode"
   ignore_errors: no
-  when: journalnode_personality == 'true'
+  when: journalnode_personality == True
 
 
 
