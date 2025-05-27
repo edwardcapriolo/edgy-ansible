@@ -5,4 +5,4 @@
 - name: Format zkfc
   command: "{{ apache_hadoop_home }}/{{apache_hadoop_version}}/bin/hdfs zkfc -formatZK"
   register: result_zkfc_format
-  failed_when: "'failed' in result_skfc_format.stdout"
+  failed_when: "'failed' in result_zkfc_format.stdout"
