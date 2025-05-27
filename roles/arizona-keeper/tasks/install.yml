@@ -54,6 +54,8 @@
         dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-client-env.sh", mode: '0740' }
     - { src: "bin/arizona-keeper-zkCli.sh",
         dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-zkCli.sh", mode: '0740' }
+    - { src: "conf-orig/logback.xml",
+        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf/logback.xml", mode: '0644' }
 
 
 - name: get truststore

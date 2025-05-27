@@ -13,4 +13,6 @@ leader_election_port: 3888
 zookeeper_maxClientCnxns: 100
 
 zookeeper_config_extra:
-  - { key: "#fake", value: "dummyvalue"}
+  - { key: "#fake", value: "dummyvalue" }
+  - { key: "#dataLogDir", value: "", description:
+    "This option will direct the machine to write the transaction log to the dataLogDir rather than the dataDir." }
