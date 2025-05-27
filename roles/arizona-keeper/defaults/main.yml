@@ -8,3 +8,11 @@ zookeeper_client_port: 2181
 zookeeper_secure_client_port: 2182
 follower_port: 2888
 leader_election_port: 3888
+
+#I generally avoid against rate limiting variables
+zookeeper_maxClientCnxns: 100
+
+zookeeper_config_extra:
+  - { key: "#fake", value: "dummyvalue" }
+  - { key: "#dataLogDir", value: "", description:
+    "This option will direct the machine to write the transaction log to the dataLogDir rather than the dataDir." }
