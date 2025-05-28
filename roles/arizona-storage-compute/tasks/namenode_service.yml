@@ -1,0 +1,9 @@
+- name: Service Namenode
+  shell: "{{ apache_hadoop_home }}/arizona-hdfs-init.sh {{ service_command }} namenode"
+  ignore_errors: no
+  when: namenode_personality == True
+
+- name: Service zkfc
+  shell: "{{ apache_hadoop_home }}/arizona-hdfs-init.sh {{ service_command }} zkfc"
+  ignore_errors: no
+  when: namenode_personality == True

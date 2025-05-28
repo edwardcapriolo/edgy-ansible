@@ -86,7 +86,7 @@ fedora                     : ok=3    changed=0    unreachable=0    failed=0    s
 ```
 To run the failover controller you must initialize its zookeepe state
 
-```declarative
+```
 $ bin/hdfs zkfc -formatZK
 ...
 2025-05-28 08:56:54,458 INFO ha.ActiveStandbyElector: Session connected.
@@ -100,8 +100,23 @@ failover controllers are stopped!
 Proceed formatting /hadoop-ha/fsabc? (Y or N) n
 
 ```
+Once you have formatted the NN it is a good idea to start it in the forgounnd one time
+```
+$ edgy@fedora:~/arizona-storage-compute/hadoop-3.4.1$ bin/hdfs namenode
+...
+2025-05-28 09:18:05,278 INFO namenode.NameNode: NameNode RPC up at: fedora/192.168.5.39:8020.
+2025-05-28 09:18:05,282 INFO namenode.FSNamesystem: Starting services required for standby state
+2025-05-28 09:18:05,298 INFO ha.EditLogTailer: Will roll logs on active node every 120 seconds.
+2025-05-28 09:18:05,319 INFO ha.StandbyCheckpointer: Starting standby checkpoint thread...
+Checkpointing active NN to possible NNs: [http://other:9870]
+Serving checkpoints at http://fedora:9870
 
-### 
+
+
+
+```
+
+### NameNode start
 ```
 edward@fedora:~/edgy-ansible$ sh examples/install-arizona-storage-compute.sh
 ...
@@ -117,7 +132,7 @@ fedora                     : ok=12   changed=1    unreachable=0    failed=0    s
 ```
 
 After the initial prep we should be able to kick up all components from a single script.
-```declarative
+```
 edward@fedora:~/edgy-ansible$ sh examples/start-arizona-storage-compute.sh
 PLAY [arizona_storage_compute] ******************************************************************************************************************************************
 PLAY RECAP **************************************************************************************************************************************************************
