@@ -18,7 +18,7 @@
 
 <configuration>
 
-
+specified
 <!-- the confiration of hadoop can be very complex primary-secondary primary primary, federated-nn etc. 
 Our goal here is to support N ha namenodes for a single fs, with auto-failover powered by zookeeper -->
   <property>
@@ -64,6 +64,7 @@ Our goal here is to support N ha namenodes for a single fs, with auto-failover p
 
   <!-- In the arizona configuration. zk + zkfc -->
   <property>
+
     <name>dfs.ha.automatic-failover.enabled</name>
     <value>true</value>
   </property>
@@ -79,7 +80,7 @@ Our goal here is to support N ha namenodes for a single fs, with auto-failover p
   </property>
 
   <property>
-    <name>dfs.client.failover.proxy.provide.{{ dfs_clustername }}</name>
+    <name>dfs.client.failover.proxy.provider.{{ dfs_clustername }}</name>
     <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
   </property>
 

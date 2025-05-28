@@ -73,6 +73,34 @@ hadoop_env_append:
 journalnode_personality: True
 ```
 
+Next run the one time setup script
+
+```
+edward@fedora:~/edgy-ansible$ sh examples/install-arizona-storage-compute-one-time.sh
+
+TASK [arizona-storage-compute : Format zkfc] ****************************************************************************************************************************
+ok: [fedora]
+
+PLAY RECAP **************************************************************************************************************************************************************
+fedora                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+To run the failover controller you must initialize its zookeepe state
+
+```declarative
+$ bin/hdfs zkfc -formatZK
+...
+2025-05-28 08:56:54,458 INFO ha.ActiveStandbyElector: Session connected.
+===============================================
+The configured parent znode /hadoop-ha/fsabc already exists.
+Are you sure you want to clear all failover information from
+ZooKeeper?
+WARNING: Before proceeding, ensure that all HDFS services and
+failover controllers are stopped!
+===============================================
+Proceed formatting /hadoop-ha/fsabc? (Y or N) n
+
+```
+
 ### 
 ```
 edward@fedora:~/edgy-ansible$ sh examples/install-arizona-storage-compute.sh
@@ -97,6 +125,7 @@ PLAY RECAP *********************************************************************
 fedora                     : ok=3    changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0  
 
 ```
+
 
 
 
