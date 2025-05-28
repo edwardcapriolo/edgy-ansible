@@ -1,0 +1,4 @@
+- name: Service Journalnode
+  shell: "{{ apache_hadoop_home }}/arizona-hdfs-init.sh {{ service_command }} journalnode"
+  ignore_errors: no
+  when: journalnode_personality == True

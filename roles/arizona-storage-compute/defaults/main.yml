@@ -29,13 +29,13 @@ queueInfo:
 # we require:
 #    the more standard bits keystores and truststores.
 #    zkclient to use a netty socket and enable the ssl/tls flag
-secure_zookeeper_hadoop_env:
-  enable: true
-  keystore_location:
-  keystore_password:
-  truststore_location:
-  truststore_password:
-  hostname_verification: true
+#secure_zookeeper_hadoop_env:
+#  enable: true
+#  keystore_location:
+#  keystore_password:
+#  truststore_location:
+#  truststore_password:
+#  hostname_verification: true
 
 hadoop_env_append:
 - "#hadoop_env_append"

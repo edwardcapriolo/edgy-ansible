@@ -1,7 +1,18 @@
 # Namenode should be formatted once at the start of its life.
 # the format creates a guid, and some data in the storage directories
 # in zk mode this guid is also used for
+- name: check namenode formatted
+  stat:
+    path: "{{ apache_hadoop_home }}/var/dfs/name/current"
+  register: nn_data
+
 - name: Format namenode
-  command: "{{ apache_hadoop_home }}/{{ apache_hadoop_version}}/bin/hdfs namenode -format"
+  command: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version}}/bin/hdfs namenode -format -nonInteractive"
   register: result_format
   failed_when: "'failed' in result_format.stdout"
+  when: namenode_personality == True
+  #and nn_data.exists == False
+
+#- name:
+#  debug:
+#    var: result_format

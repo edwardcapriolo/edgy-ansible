@@ -3,6 +3,9 @@
 # this component would not be used in configurations where the namenode is NAS and the fail over is controlled by
 # some other method
 - name: Format zkfc
-  command: "{{ apache_hadoop_home }}/{{apache_hadoop_version}}/bin/hdfs zkfc -formatZK"
+  command: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/bin/hdfs zkfc -formatZK"
   register: result_zkfc_format
   failed_when: "'failed' in result_zkfc_format.stdout"
+- name:
+  debug:
+    var: result_zkfc_format
