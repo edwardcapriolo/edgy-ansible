@@ -1,0 +1,4 @@
+- name: Service datanode
+  shell: "{{ apache_hadoop_home }}/arizona-hdfs-init.sh {{ service_command }} datanode"
+  ignore_errors: no
+  when: datanode_personality == True

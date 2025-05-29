@@ -32,6 +32,7 @@ hadoop_env_append:
 
 journalnode_personality: True
 namenode_personality: True
+datanode_personality: True
 
 secure_zookeeper_hadoop_env:
   enable: true
