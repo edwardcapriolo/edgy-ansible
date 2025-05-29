@@ -59,7 +59,7 @@ Our goal here is to support N ha namenodes for a single fs, with auto-failover p
   <property>
     <!-- the string looks qjournal://node1:8485;node2:8485/mycluster (where mycluster is the fs name hdfs://mycluster -->
     <name>dfs.namenode.shared.edits.dir</name>
-    <value>qjournal://{% for node in journalnodes %}{{ node['host'] }}:{{ node['port'] }}{% if not loop.last %};{% endif %}{% endfor %}/{{dfs_clustername }}</value>
+    <value>qjournal://{% for node in journalnodes %}{{ node['host'] }}:{{ node['port'] }}{% if not loop.last %};{% endif %}{% endfor %}/{{ dfs_clustername }}</value>
   </property>
 
   <!-- In the arizona configuration. zk + zkfc -->

@@ -35,6 +35,10 @@
     state: directory
     mode: 0775
 
+- name: Include auto-topology
+  include_tasks:
+    file: ansible_hostvar_topology.yml
+
 - name: get truststore
   include_role:
     name: edgy-simple-ca
@@ -72,3 +76,4 @@
     src: "arizona-hdfs-init.sh"
     dest: "{{ apache_hadoop_home }}/arizona-hdfs-init.sh"
     mode: "0744"
+

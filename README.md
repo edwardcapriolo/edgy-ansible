@@ -15,7 +15,7 @@ Things Edgy is about:
 
 - [edgy-simple-ca](roles/edgy-simple-ca/README.md) a simple CA that is used by other playbooks
 - [arizona-keeper](roles/arizona-keeper/README.md) a zookeeper role with TLS security
-- [arizona-storage-compute](roles/arizona-storage-compute/README.md) HDFS and YARN HA no SPOF
+- [arizona-storage-compute](roles/arizona-storage-compute/README.md) HDFS and YARN HA no Single Point Of Failure
 
 ## Why not Ansible galaxy?
 

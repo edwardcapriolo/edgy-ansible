@@ -43,3 +43,5 @@ hadoop_zookeeper_truststore_password: "itssecret"
 hadoop_zookeeper_hostname_verification: "false"
 
 hadoop_heapsize_max: 200M
+
+hadoop_rack: "/availability-zone-1"

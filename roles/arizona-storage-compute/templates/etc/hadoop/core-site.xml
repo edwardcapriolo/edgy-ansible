@@ -28,5 +28,10 @@
     <value>{{ apache_hadoop_tmp_dir }}</value>
   </property>
 
+  <property>
+    <name>net.topology.script.file.name</name>
+    <value>{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/topology.sh</value>
+  </property>
+
   <!-- do topology script here -->
 </configuration>

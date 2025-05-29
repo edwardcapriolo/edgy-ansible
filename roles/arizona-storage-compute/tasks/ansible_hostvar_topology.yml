@@ -1,0 +1,8 @@
+- name: template topology.data
+  template:
+    src: etc/hadoop/topology.data
+    dest: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/topology.data"
+- name: template topology.sh
+  template:
+    src: etc/hadoop/topology.sh
+    dest: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/topology.sh"
