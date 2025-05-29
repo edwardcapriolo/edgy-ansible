@@ -41,3 +41,5 @@ hadoop_zookeeper_keystore_password: ssshhh
 hadoop_zookeeper_truststore_location: "myTruststore.jks"
 hadoop_zookeeper_truststore_password: "itssecret"
 hadoop_zookeeper_hostname_verification: "false"
+
+hadoop_heapsize_max: 200M

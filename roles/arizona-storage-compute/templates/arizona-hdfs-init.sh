@@ -7,6 +7,9 @@ case "$1" in
   stop)
     nohup bin/hdfs --daemon stop $2
     ;;
+  status)
+    bin/hdfs --daemon status $2
+    ;;
   *)
     echo "Usage: stop COMPONENT_NAME (namenode,datanode, etc)"
     exit 1

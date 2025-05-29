@@ -9,9 +9,9 @@
 - name: Format namenode
   command: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version}}/bin/hdfs namenode -format -nonInteractive"
   register: result_format
-  failed_when: "'failed' in result_format.stdout"
-  when: namenode_personality == True
-  #and nn_data.exists == False
+  when:
+    - namenode_personality == True
+    - not nn_data.stat.exists
 
 #- name:
 #  debug:

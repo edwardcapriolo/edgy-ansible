@@ -78,6 +78,10 @@ export LANG=en_US.UTF-8
 # There is no default; the JVM will autoscale based upon machine
 # memory size.
 # export HADOOP_HEAPSIZE_MAX=
+{% if hadoop_heapsize_max is defined %}
+export HADOOP_HEAPSIZE_MAX={{ hadoop_heapsize_max }}
+{% endif %}
+
 
 # The minimum amount of heap to use (Java -Xms).  If no unit
 # is provided, it will be converted to MB.  Daemons will
@@ -300,7 +304,6 @@ export HADOOP_OS_TYPE=${HADOOP_OS_TYPE:-$(uname -s)}
 # Specify the JVM options to be used when starting the SecondaryNameNode.
 # These options will be appended to the options specified as HADOOP_OPTS
 # and therefore may override any similar flags set in HADOOP_OPTS
-#
 # This is the default:
 # export HDFS_SECONDARYNAMENODE_OPTS="-Dhadoop.security.logger=INFO,RFAS"
 

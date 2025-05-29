@@ -62,3 +62,5 @@ journalnode_personality: false
 
 hadoop_zookeeper_ssl_proto: "TLSv1.3"
 
+hadoop_heapsize_max: 2000MB
+
