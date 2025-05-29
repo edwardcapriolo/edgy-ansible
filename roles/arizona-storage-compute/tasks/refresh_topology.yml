@@ -1,0 +1,13 @@
+- name: Refresh nodes
+  shell: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/bin/hdfs dfsadmin -refreshNodes"
+  ignore_errors: no
+
+- name: Print topology
+  shell: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/bin/hdfs dfsadmin -printTopology"
+  ignore_errors: no
+
+#  edgy@fedora:~/arizona-storage-compute/hadoop-3.4.1$ bin/hdfs dfsadmin -refreshNodes
+#    Refresh nodes successful for fedora/192.168.1.238:8020
+#    Refresh nodes failed for other/127.0.0.2:8020
+#  refreshNodes: Call From fedora/192.168.1.238 to other:8020 failed on connection exception: java.net.ConnectException: Connection refused; For more details see:  http://wiki.apache.org/hadoop/ConnectionRefused
+#    edgy@fedora:~/arizona-storage-compute/hadoop-3.4.1$ bin/hdfs dfsadmin -printTopology

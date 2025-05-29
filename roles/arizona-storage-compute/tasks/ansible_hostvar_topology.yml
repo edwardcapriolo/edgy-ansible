@@ -6,3 +6,4 @@
   template:
     src: etc/hadoop/topology.sh
     dest: "{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/topology.sh"
+    mode: "0755"

@@ -1,0 +1,3 @@
+ansible-playbook -v arizona_storage_compute_local.yml -i hosts/LOCAL/hosts --extra-vars "operation=refresh_topology hostname=arizona_storage_compute"
+
+#2025-05-29 11:31:23,889 INFO util.ExitUtil: Exiting with status 1: org.apache.hadoop.HadoopIllegalArgumentException: Configuration has multiple addresses that match local node's address. Please configure the system with dfs.nameservice.id and dfs.ha.namenode.id
