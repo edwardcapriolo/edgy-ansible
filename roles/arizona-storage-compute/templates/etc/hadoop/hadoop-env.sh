@@ -440,7 +440,7 @@ export HADOOP_PID_DIR="{{ apache_hadoop_log_dir }}"
 {% if secure_zookeeper_hadoop_env.enable == true %}
 HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.client.secure=true"
 #older zk clients do not yet restpect zkclient.ssl.protocol thus we set both
-HADOOP_OPTS="${HADOOP_OPTS} -Dzkclient.ssl.protocol=TLSv1.3 -Dzookeeper.ssl.protocol=TLSv1.3"
+HADOOP_OPTS="${HADOOP_OPTS} -Dzkclient.ssl.protocol={{ hadoop_zookeeper_ssl_proto }} -Dzookeeper.ssl.protocol={{ hadoop_zookeeper_ssl_proto }}"
 HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.clientCnxnSocket=org.apache.zookeeper.ClientCnxnSocketNetty"
 HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.keyStore.location={{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/{{ hadoop_zookeeper_keystore_location }}"
 HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.keyStore.password={{ hadoop_zookeeper_keystore_password }}"

@@ -60,4 +60,5 @@ namenode:
 namenode_personality: false
 journalnode_personality: false
 
+hadoop_zookeeper_ssl_proto: "TLSv1.3"
 
