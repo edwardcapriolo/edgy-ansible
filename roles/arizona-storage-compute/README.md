@@ -25,7 +25,7 @@ HDFS provides a distributed, redundant, highly available user space filesystem.
 This playbook provisions:
 - Redundant high availability Namenode
 - Redundant Journal (No SPOF such as NAS)
-- Configurable data distribution via rack awareness
+- [configurable rack awareness](rackaware.md) Configurable data distribution via rack awareness
 
 ### Security
 
@@ -172,7 +172,7 @@ Serving checkpoints at http://fedora:9870
 ```
 
 
-
+[arizona_keeper.yml](../../hosts/LOCAL/group_vars/arizona_keeper.yml)
 ### NameNode start
 
 
