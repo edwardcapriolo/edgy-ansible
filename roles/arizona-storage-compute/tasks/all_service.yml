@@ -17,6 +17,11 @@
   ignore_errors: no
   when: namenode_personality == True
 
+- name: Include datanode
+  include_tasks:
+    file: datanode_service.yml
+
+
 
 
 
