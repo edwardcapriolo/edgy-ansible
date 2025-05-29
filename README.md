@@ -11,6 +11,12 @@ Things Edgy is about:
 - Secure: PKI/SSL/TLS default limit 'punting' in the form of 'secuity comes later' 
 - No picking winners
 
+## What is here?
+
+- [edgy-simple-ca](roles/edgy-simple-ca/README.md) a simple CA that is used by other playbooks
+- [arizona-keeper](roles/arizona-keeper/README.md) a zookeeper role with TLS security
+- [arizona-storage-compute](roles/arizona-storage-compute/README.md) HDFS and YARN HA no SPOF
+
 ## Why not Ansible galaxy?
 
 No shame in my game. I don't know ansible galaxy. Send a PR
