@@ -53,13 +53,28 @@ hundreds, or even thousands of servers. In those setups overhead such as 16GB ra
 In those cases it is ok to start small (like 2GB) heap for each component. Later on be ready to move components to 
 dedicated hardware and more generous CPU/RAM allocations 
 
+# High Level HDFS HA Setup
 
-# Getting started
+This is the high level list of tasks. This seems like many steps, but some steps
+are a simple as running a single playbook
+
+- Configure host and group files
+- run install play which makes binaries and templates configuration files 
+- start all journal nodes 
+- format a single namenode 
+- "format" zookeeper data to create entries for failover 
+- start namenode and zkfc
+- start all datanodes
+
+# Detailed HDFS HA Setup
 
 Let's define the 'fake distributed' setup. All the components are running in different processes. All processes are 
-running on a single host. Each component that would normally be setup (2x or 3x) in a true environment is running 1x.
+running on a single host. In a production environment multiple components would be deployed across 
+multiple hosts.
 
-Inside the hosts/LOCAL/fedora.yml
+The role has default configuration options however some variables must be set.
+
+hosts/LOCAL/fedora.yml
 
 ```
 apache_hadoop_home: /home/edgy/arizona-storage-compute
@@ -71,52 +86,26 @@ hadoop_env_append:
   - "export HDFS_NAMENODE_USER=edgy"
 
 journalnode_personality: True
-```
-
-Next run the one time setup script
-
-```
-edward@fedora:~/edgy-ansible$ sh examples/install-arizona-storage-compute-one-time.sh
-
-TASK [arizona-storage-compute : Format zkfc] ****************************************************************************************************************************
-ok: [fedora]
-
-PLAY RECAP **************************************************************************************************************************************************************
-fedora                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
-```
-To run the failover controller you must initialize its zookeepe state
-
-```
-$ bin/hdfs zkfc -formatZK
 ...
-2025-05-28 08:56:54,458 INFO ha.ActiveStandbyElector: Session connected.
-===============================================
-The configured parent znode /hadoop-ha/fsabc already exists.
-Are you sure you want to clear all failover information from
-ZooKeeper?
-WARNING: Before proceeding, ensure that all HDFS services and
-failover controllers are stopped!
-===============================================
-Proceed formatting /hadoop-ha/fsabc? (Y or N) n
-
-```
-Once you have formatted the NN it is a good idea to start it in the forgounnd one time
-```
-$ edgy@fedora:~/arizona-storage-compute/hadoop-3.4.1$ bin/hdfs namenode
-...
-2025-05-28 09:18:05,278 INFO namenode.NameNode: NameNode RPC up at: fedora/192.168.5.39:8020.
-2025-05-28 09:18:05,282 INFO namenode.FSNamesystem: Starting services required for standby state
-2025-05-28 09:18:05,298 INFO ha.EditLogTailer: Will roll logs on active node every 120 seconds.
-2025-05-28 09:18:05,319 INFO ha.StandbyCheckpointer: Starting standby checkpoint thread...
-Checkpointing active NN to possible NNs: [http://other:9870]
-Serving checkpoints at http://fedora:9870
-
-
-
-
 ```
 
-### NameNode start
+hosts/local/group_vars/arizona_storage_compute.yaml
+
+Note: hadoop wont do the HA namenode with a single node in the configuration. Thus we created
+a fake node called "other". It doest not need to exists.
+```
+namenodes:
+- { shortname: "fedora" , host: "fedora" }
+- { shortname: "other" , host: "other" }
+journalnodes:
+- { host: "fedora", port: 8485 }
+zookeeper:
+- { host: "fedora", port: 2182 }
+```
+Because this is a "single node" installation we did not need to separate the configuration across host_vars and 
+group_vars.
+
+The install playbook puts all the binaries and configurations in place
 ```
 edward@fedora:~/edgy-ansible$ sh examples/install-arizona-storage-compute.sh
 ...
@@ -131,9 +120,65 @@ PLAY RECAP *********************************************************************
 fedora                     : ok=12   changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0
 ```
 
+Next, there DOES exist a one-time setup script, but it is likely easier to run the steps
+one at a time to "supervise" it.
+
+```
+cat examples/install-arizona-store-compute-one-time.sh
+...
+ansible-playbook -v arizona_storage_compute_local.yml -i hosts/LOCAL/hosts \
+--extra-vars "operation=journalnode_service hostname=arizona_storage_compute service_command=start"
+
+ansible-playbook -v arizona_storage_compute_local.yml -i hosts/LOCAL/hosts --extra-vars "operation=format_namenode hostname=arizona_storage_compute"
+
+```
+To run the failover controller you must initialize its zookeeper state
+
+```
+$ bin/hdfs zkfc -formatZK
+...
+2025-05-28 08:56:54,458 INFO ha.ActiveStandbyElector: Session connected.
+===============================================
+The configured parent znode /hadoop-ha/fsabc already exists.
+Are you sure you want to clear all failover information from
+ZooKeeper?
+WARNING: Before proceeding, ensure that all HDFS services and
+failover controllers are stopped!
+===============================================
+Proceed formatting /hadoop-ha/fsabc? (Y or N) n
+```
+If you are curious about the data that was created:
+
+```
+edgy@fedora:~/arizona-keeper/apache-zookeeper-3.9.3-bin/bin$ sh arizona-keeper-zkCli.sh -server fedora:2182
+[zk: fedora:2182(CONNECTED) 0] ls /
+[hadoop-ha, zookeeper]
+[zk: fedora:2182(CONNECTED) 1] ls /hadoop-ha 
+[fsabc]
+[zk: fedora:2182(CONNECTED) 2] ls /hadoop-ha/fsabc 
+[ActiveBreadCrumb, ActiveStandbyElectorLock]
+```
+
+Once you have formatted the NN it is a good idea to start it in the foregound one time
+```
+$ edgy@fedora:~/arizona-storage-compute/hadoop-3.4.1$ bin/hdfs namenode
+...
+2025-05-28 09:18:05,278 INFO namenode.NameNode: NameNode RPC up at: fedora/192.168.5.39:8020.
+2025-05-28 09:18:05,282 INFO namenode.FSNamesystem: Starting services required for standby state
+2025-05-28 09:18:05,298 INFO ha.EditLogTailer: Will roll logs on active node every 120 seconds.
+2025-05-28 09:18:05,319 INFO ha.StandbyCheckpointer: Starting standby checkpoint thread...
+Checkpointing active NN to possible NNs: [http://other:9870]
+Serving checkpoints at http://fedora:9870
+```
+
+
+
+### NameNode start
+
+
 After the initial prep we should be able to kick up all components from a single script.
 ```
-edward@fedora:~/edgy-ansible$ sh examples/start-arizona-storage-compute.sh
+edward@fedora:~/edgy-ansible$ sh examples/service-arizona-storage-compute.sh start
 PLAY [arizona_storage_compute] ******************************************************************************************************************************************
 PLAY RECAP **************************************************************************************************************************************************************
 ...
@@ -147,7 +192,6 @@ fedora                     : ok=3    changed=1    unreachable=0    failed=0    s
 ### starting journalnode
 
 First start the journalnode, in the foreground watch it come up once.
-
 
 ```
 dgy@fedora:~/arizona-storage-compute/hadoop-3.4.1$ cd /home/edgy/arizona-storage-compute/hadoop-3.4.1/
