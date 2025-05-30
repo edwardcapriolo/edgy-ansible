@@ -49,6 +49,32 @@ Our goal here is to support N ha namenodes for a single fs, with auto-failover p
   {% endfor %}
 
 
+<!--
+   <property>
+     <name>dfs.http.policy</name>
+     <value>HTTP_AND_HTTPS</value>
+   </property>
+
+   <property>
+     <name>dfs.client.https.need-auth</name>
+     <value>false</value>
+   </property>
+
+   <property>
+     <name>dfs.https.server.keystore.resource</name>
+     <value>{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/ssl-server.xml</value>
+   </property>
+
+   <property>
+      <name>dfs.client.https.keystore.resource</name>
+      <value>{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/ssl-client.xml</value>
+   </property>
+
+   <property>
+      <name>dfs.datanode.https.address</name>
+      <value>0.0.0.0:50475</value>
+   </property>
+-->
 
   <!-- In the arizona configuration. N journal nodes for redundancy -->
   <property>
@@ -64,7 +90,6 @@ Our goal here is to support N ha namenodes for a single fs, with auto-failover p
 
   <!-- In the arizona configuration. zk + zkfc -->
   <property>
-
     <name>dfs.ha.automatic-failover.enabled</name>
     <value>true</value>
   </property>

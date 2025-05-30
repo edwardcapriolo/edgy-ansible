@@ -1,0 +1,34 @@
+<configuration>
+
+    <!-- Server Certificate Store -->
+    <property>
+        <name>ssl.client.keystore.type</name>
+        <value>jks</value>
+    </property>
+    <property>
+        <name>ssl.client.keystore.location</name>
+        <value>{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/{{ hadoop_zookeeper_keystore_location }}</value>
+    </property>
+    <property>
+        <name>ssl.client.keystore.password</name>
+        <value>{{ hadoop_zookeeper_keystore_password }}</value>
+    </property>
+
+    <!-- Server Trust Store -->
+    <property>
+        <name>ssl.client.truststore.type</name>
+        <value>jks</value>
+    </property>
+    <property>
+        <name>ssl.client.truststore.location</name>
+        <value>{{ apache_hadoop_home }}/hadoop-{{ apache_hadoop_version }}/etc/hadoop/{{ hadoop_zookeeper_truststore_location }}</value>
+    </property>
+    <property>
+        <name>ssl.client.truststore.password</name>
+        <value>{{ hadoop_zookeeper_truststore_password }}</value>
+    </property>
+    <property>
+        <name>ssl.client.truststore.reload.interval</name>
+        <value>100000</value>
+    </property>
+</configuration>

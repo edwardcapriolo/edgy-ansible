@@ -76,6 +76,11 @@
     - { src: "etc/hadoop/yarn-env.sh",
         dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/yarn-env.sh", mode: '0644' }
 
+    - { src: "etc/hadoop/ssl-server.xml",
+        dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/ssl-server.xml", mode: '0600' }
+    - { src: "etc/hadoop/ssl-client.xml",
+        dest: "hadoop-{{ apache_hadoop_version }}/etc/hadoop/ssl-client.xml", mode: '0600' }
+
 - name: install hdfs daemon arizona-entry-point
   template:
     src: "arizona-hdfs-init.sh"
