@@ -1,0 +1,40 @@
+#https://archive.apache.org/dist/spark/spark-3.4.4/spark-3.4.4-bin-without-hadoop.tgz
+- name: Create application hierarchy
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+  with_items:
+    - '{{ edgy_spark_home }}'
+
+- name: fetch and extract artifacts
+  block:
+    - name: check for extracted archive
+      stat:
+        path: "{{ edgy_spark_home }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
+      register: spark_stat_result
+    - name: fetch spark
+      get_url:
+        url: "https://archive.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
+        dest: "{{ edgy_spark_home }}"
+        tmp_dest: "/tmp"
+      when: spark_stat_result.stat.exists == False
+    - name: extract spark
+      unarchive:
+        src: "{{ edgy_spark_home }}/spark-{{ spark_version }}-bin-without-hadoop.tgz"
+        dest: "{{ edgy_spark_home }}"
+        copy: no
+        exclude: [ "conf" ]
+      when: spark_stat_result.stat.exists == False
+- name: Create conf directory
+  file:
+    path: "{{ edgy_spark_home }}/spark-{{ spark_version }}-bin-without-hadoop/conf"
+    state: directory
+    mode: 0755
+
+- name: template conf directory
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ edgy_spark_home }}/{{ item.dest }}"
+  with_items:
+    - { src: "conf/spark-env.sh", dest: "spark-{{ spark_version }}-bin-without-hadoop/conf/spark-env.sh" }

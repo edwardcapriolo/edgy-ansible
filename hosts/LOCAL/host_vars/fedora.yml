@@ -46,3 +46,10 @@ hadoop_zookeeper_hostname_verification: "false"
 hadoop_heapsize_max: 200M
 
 hadoop_rack: "/availability-zone-1"
+
+
+edgy_spark_home: /home/edgy/edgy_spark
+spark_env_append:
+  - "export JAVA_HOME=/usr/lib/jvm/temurin-8-jdk"
+  - "export SPARK_DIST_CLASSPATH=$({{ apache_hadoop_home }}/hadoop-3.4.1/bin/hadoop classpath)"
+  - "export HADOOP_CONF_DIR={{ apache_hadoop_home }}/hadoop-3.4.1/etc/hadoop"
