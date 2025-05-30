@@ -196,3 +196,6 @@
 # Directory containing service examples
 # export YARN_SERVICE_EXAMPLES_DIR = $HADOOP_YARN_HOME/share/hadoop/yarn/yarn-service-examples
 # export YARN_CONTAINER_RUNTIME_DOCKER_RUN_OVERRIDE_DISABLE=true
+
+YARN_LOG_DIR={{ apache_hadoop_log_dir }}
+YARN_PID_DIR={{ apache_hadoop_log_dir }}

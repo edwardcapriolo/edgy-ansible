@@ -1,10 +1,19 @@
 #HAUtil wants two nodes even if one doesn't exist to format
+dfs_clustername: fsabc
+resourcemanager_cluster_id: rmabc
+
 namenodes:
 - { shortname: "fedora" , host: "fedora" }
 - { shortname: "other" , host: "other" }
 journalnodes:
 - { host: "fedora", port: 8485 }
+resourcemanagers:
+- { host: "fedora", shortname: "fedora"}
+- { host: "other", shortname: "other" }
 zookeeper:
 - { host: "fedora", port: 2182 }
 hadoop_hostvar_topology:
 - { host: "fedora" }
+
+yarn_site_properties:
+  - { name: "yarn-nodemanager.resource.memory-mb", value: 2048 }

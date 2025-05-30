@@ -1,0 +1,4 @@
+- name: Service ResourceManager
+  shell: "{{ apache_hadoop_home }}/arizona-yarn-init.sh {{ service_command }} resourcemanager"
+  ignore_errors: no
+  when: resourcemanager_personality == True

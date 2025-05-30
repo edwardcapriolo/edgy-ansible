@@ -27,6 +27,12 @@ This playbook provisions:
 - Redundant Journal (No SPOF such as NAS)
 - [configurable rack awareness](rackaware.md) Configurable data distribution via rack awareness
 
+### Compute (YARN)
+
+This playbook provisions:
+- Redundant, high availability ResourceManager (RM)
+- RM state stored in zookeeper
+
 ### Security
 
 This role is not intended to be used on a public network. The application 
@@ -172,7 +178,25 @@ Serving checkpoints at http://fedora:9870
 ```
 
 
-[arizona_keeper.yml](../../hosts/LOCAL/group_vars/arizona_keeper.yml)
+### Detailed YARN setup
+
+ResourceManager has a zookeeper election similar to that of Namenode HA, but
+luckily it does not required extra processes (ZKFC, JournalNodes). Effectively
+the two resource managers uses ZK to store their state and perform leader elections.
+
+Configure a cluste_id. List the resource managers, and 
+```
+resourcemanager_cluster_id: rmabc
+
+resourcemanagers:
+- { host: "fedora", shortname: "fedora"}
+- { host: "other", shortname: "other" }
+```
+In the host file set the personality
+```
+resourcemanager_personality: True
+```
+
 ### NameNode start
 
 

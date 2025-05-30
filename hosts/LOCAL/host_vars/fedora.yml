@@ -23,16 +23,17 @@ truststore_password: "itssecret"
 
 
 apache_hadoop_home: /home/edgy/arizona-storage-compute
-dfs_clustername: fsabc
 
+#///usr/lib/jvm/temurin-17-jdk
 hadoop_env_append:
-  - "export JAVA_HOME=/usr"
+  - "export JAVA_HOME=/usr/lib/jvm/temurin-8-jdk"
 # Controls the system use that can run the namenode
   - "export HDFS_NAMENODE_USER=edgy"
 
 journalnode_personality: True
 namenode_personality: True
 datanode_personality: True
+resourcemanager_personality: True
 
 secure_zookeeper_hadoop_env:
   enable: true
