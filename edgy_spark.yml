@@ -1,0 +1,7 @@
+- hosts: "{{ hostname }}"
+  remote_user: edgy
+  gather_facts: yes
+  tasks:
+    - include_role:
+        name: edgy-spark
+        tasks_from: main.yml
