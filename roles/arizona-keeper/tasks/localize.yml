@@ -1,0 +1,32 @@
+- name: template myid
+  template:
+    src: conf/myid
+    dest: "{{ zookeeper_data_dir }}/myid"
+
+- name: template conf
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ apache_zookeeper_home }}/{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "conf/zoo.cfg",
+        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf/zoo.cfg", mode: '0644' }
+    - { src: "bin/arizona-keeper-server-env.sh",
+        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-server-env.sh", mode: '0740' }
+    - { src: "bin/arizona-keeper-client-env.sh",
+        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-client-env.sh", mode: '0740' }
+
+- name: get truststore
+  include_role:
+    name: edgy-simple-ca
+    tasks_from: install_ca
+  vars:
+    ca_directory: "{{ apache_zookeeper_home }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf"
+
+- name: install client/server certificate material
+  include_role:
+    name: edgy-simple-ca
+    tasks_from: install_client_server
+  vars:
+    ca_directory: "{{ apache_zookeeper_home }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf"
+    client_server_file: "{{ inventory_hostname }}"

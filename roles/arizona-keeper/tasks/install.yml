@@ -1,4 +1,4 @@
-- name: Create application heirarchy
+- name: Create application hierarchy
   file:
     path: '{{ item }}'
     state: directory
@@ -33,42 +33,15 @@
     state: directory
     mode: 0775
 
-- name: template myid
-  template:
-    src: conf/myid
-    dest: "{{ zookeeper_data_dir }}/myid"
-
-- name: template conf
+- name: Template conf items (non localized)
   template:
     src: "{{ item.src }}"
     dest: "{{ apache_zookeeper_home }}/{{ item.dest }}"
     mode: "{{ item.mode }}"
   with_items:
-    - { src: "conf/zoo.cfg",
-        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf/zoo.cfg", mode: '0644' }
-    - { src: "bin/arizona-keeper-server-env.sh",
-        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-server-env.sh", mode: '0740' }
     - { src: "bin/arizona-keeper-zkServer.sh",
         dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-zkServer.sh", mode: '0740' }
-    - { src: "bin/arizona-keeper-client-env.sh",
-        dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-client-env.sh", mode: '0740' }
     - { src: "bin/arizona-keeper-zkCli.sh",
         dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/bin/arizona-keeper-zkCli.sh", mode: '0740' }
     - { src: "conf-orig/logback.xml",
         dest: "apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf/logback.xml", mode: '0644' }
-
-
-- name: get truststore
-  include_role:
-    name: edgy-simple-ca
-    tasks_from: install_ca
-  vars:
-    ca_directory: "{{ apache_zookeeper_home }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf"
-
-- name: install client/server certificate material
-  include_role:
-    name: edgy-simple-ca
-    tasks_from: install_client_server
-  vars:
-    ca_directory: "{{ apache_zookeeper_home }}/apache-zookeeper-{{ apache_zookeeper_version }}-bin/conf"
-    client_server_file: "{{ inventory_hostname }}"

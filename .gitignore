@@ -1,3 +1,5 @@
 roles/edgy-simple-ca/files
 .idea
 edgy-ansible.iml
+
+edgy-image-setup

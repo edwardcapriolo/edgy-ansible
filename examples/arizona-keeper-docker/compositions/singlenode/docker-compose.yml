@@ -1,0 +1,12 @@
+#version: '2'
+
+services:
+  solozk:
+    image: "edgy-keeper:latest"
+    command: sh /opt/arizona-keeper/apache-zookeeper-3.9.3-bin/bin/arizona-keeper-zkServer.sh start-foreground
+    volumes: 
+    - ./zoo.cfg:/opt/arizona-keeper/apache-zookeeper-3.9.1/conf/zoo.cfg
+    expose: 
+    - 2181
+    - 2182
+#
