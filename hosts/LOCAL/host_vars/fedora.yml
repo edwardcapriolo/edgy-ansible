@@ -47,9 +47,21 @@ hadoop_heapsize_max: 200M
 
 hadoop_rack: "/availability-zone-1"
 
-
+### start: edgy-spark ###
 edgy_spark_home: /home/edgy/edgy_spark
 spark_env_append:
   - "export JAVA_HOME=/usr/lib/jvm/temurin-8-jdk"
   - "export SPARK_DIST_CLASSPATH=$({{ apache_hadoop_home }}/hadoop-3.4.1/bin/hadoop classpath)"
   - "export HADOOP_CONF_DIR={{ apache_hadoop_home }}/hadoop-3.4.1/etc/hadoop"
+### end: edgy-spark ###
+
+### start: edgy-kafka ###
+apache_kafka_home: /home/edgy/edgy-kafka
+kafka_broker_id: 100
+kafka_rack: "/availability-zone-1"
+kafka_keystore_location: fedora.jks
+kafka_keystore_password: ssshhh
+kafka_server_cn: "CN=fedora"
+kafka_truststore_location: "myTruststore.jks"
+kafka_truststore_password: "itssecret"
+### end: edgy-kafka

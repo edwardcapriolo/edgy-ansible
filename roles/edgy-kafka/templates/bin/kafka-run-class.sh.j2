@@ -1,0 +1,16 @@
+#We wedge in our zookeeper parameters here
+
+#This is a clone form arizona hadoop-env. There is a chance to synergize here
+HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.client.secure=true"
+#older zk clients do not yet restpect zkclient.ssl.protocol thus we set both
+HADOOP_OPTS="${HADOOP_OPTS} -Dzkclient.ssl.protocol={{ kafka_zookeeper_ssl_proto }} -Dzookeeper.ssl.protocol={{ kafka_zookeeper_ssl_proto }}"
+HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.clientCnxnSocket=org.apache.zookeeper.ClientCnxnSocketNetty"
+HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.keyStore.location={{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config/{{ kafka_keystore_location }}"
+HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.keyStore.password={{ kafka_keystore_password }}"
+HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.trustStore.location={{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config/{{ kafka_truststore_location }}"
+HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.trustStore.password={{ kafka_truststore_password }}"
+HADOOP_OPTS="${HADOOP_OPTS} -Dzookeeper.ssl.hostnameVerification={{ kafka_zookeeper_hostname_verification }}"
+
+export KAFKA_OPTS="$KAFKA_OPTS $HADOOP_OPTS"
+
+exec $(dirname $0)/kafka-run-class-stock.sh "$@"

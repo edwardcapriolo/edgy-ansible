@@ -1,0 +1,10 @@
+- name: List currently installed topics
+  command: "{{ apache_kafka_home }}/current/bin/kafka-topics.sh --zookeeper {{ zk_connect }} --list"
+  register: list_topics
+
+- name: Create topics not existing
+  command: "{{ apache_kafka_home }}/current/bin/kafka-topics.sh --create --zookeeper {{ zk_connect }} --topic {{ item.topic }}"
+  with_items:
+    - "{{ topic_configuration }}"
+  when: item.topic not in list_topics.stdout_lines
+

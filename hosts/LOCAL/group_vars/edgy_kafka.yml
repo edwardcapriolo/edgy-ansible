@@ -1,0 +1,7 @@
+kafka_brokers:
+- "fedora"
+
+kafka_data_dir: /home/edgy/edgy-kafka/var
+
+kafka_zookeeper:
+  - { host: "fedora", port: 2182 }

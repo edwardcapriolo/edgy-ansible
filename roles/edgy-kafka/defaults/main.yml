@@ -1,0 +1,13 @@
+apache_kafka_home: /opt/arizona-keeper
+apache_kafka_version: 3.9.1
+apache_kafka_log_dir: "{{ apache_kafka_home }}/logs"
+kafka_data_dir: "{{ apache_kafka_home }}/var"
+
+kafka_zookeeper_ssl_proto: "TLSv1.3"
+kafka_zookeeper_hostname_verification: "true"
+
+topics_configuration:
+  - { topic: "topic1", acl_list: [
+      { operation: "read", principal: "bob" }
+      ]
+    }
