@@ -1,0 +1,52 @@
+- name: Create application hierarchy
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+  with_items:
+    - '{{ apache_kafka_home }}'
+
+#https://archive.apache.org/dist/kafka/3.9.1/kafka_2.12-3.9.1.tgz
+- name: fetch and extract archive
+  block:
+    - name: installation exists
+      stat:
+        path: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}"
+      register: stat_install_exists
+    - name: download artifact
+      get_url:
+        url: "https://archive.apache.org/dist/kafka/{{ apache_kafka_version }}/kafka_2.12-{{ apache_kafka_version }}.tgz"
+        dest: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}.tgz"
+        tmp_dest: "/tmp"
+      when: stat_install_exists.stat.exists == False
+    - name: extract package
+      unarchive:
+        src: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}.tgz"
+        dest: "{{ apache_kafka_home }}"
+        copy: no
+        exclude: [ "config" ]
+      when: stat_install_exists.stat.exists == False
+    - name: move kafka run class
+      copy:
+        remote_src: True
+        src: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/bin/kafka-run-class.sh"
+        dest: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/bin/kafka-run-class-stock.sh"
+      when: stat_install_exists.stat.exists == False
+    - name: remove original
+      file:
+        path: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/bin/kafka-run-class.sh"
+        state: absent
+
+#- name: fake binary install
+#  file:
+#    path: "{{ apache_kafka_home }}/apache-kafka-{{ apache_kafka_version }}-bin/"
+#    state: directory
+#    mode: 0755
+
+
+- name: Create config
+  file:
+    path: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config"
+    state: directory
+    mode: 0755
+

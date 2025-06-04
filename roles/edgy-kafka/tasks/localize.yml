@@ -1,0 +1,33 @@
+- name: Template server.properties
+  template:
+    src: config/server.properties.j2
+    dest: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config/server.properties"
+    mode: 0700
+
+- name: Template edgy run
+  template:
+    src: bin/kafka-run-class.sh.j2
+    dest: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/bin/kafka-run-class.sh"
+    mode: 0755
+
+- name: Template log4j
+  template:
+    src: config/log4j.properties
+    dest: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config/log4j.properties"
+    mode: 0700
+
+- name: get truststore
+  include_role:
+    name: edgy-simple-ca
+    tasks_from: install_ca
+  vars:
+    ca_directory: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config"
+
+- name: install client/server certificate material
+  include_role:
+    name: edgy-simple-ca
+    tasks_from: install_client_server
+  vars:
+    ca_directory: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config"
+    client_server_file: "{{ inventory_hostname }}"
+

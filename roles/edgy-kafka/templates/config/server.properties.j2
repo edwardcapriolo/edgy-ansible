@@ -1,0 +1,32 @@
+{% if kafka_zookeeper is defined %}
+zookeeper.connect={% for node in kafka_zookeeper %}{{ node.host }}:{{ node.port }}{% if not loop.last %},{% endif %}{% endfor %}
+{% endif %}
+
+{# internode communication will be protected via ssl #}
+security.inter.broker.protocol=SSL
+ssl.client.auth=required
+
+{# you can set this to empty to disable #}
+ssl.endpoint.identification.algorithm=https
+ssl.enabled.protocols=TLSv1.3
+#ssl.cipher.suites
+
+super.user={% for item in kafka_brokers %}{{ hostvars[item]['kafka_server_cn'] }}{% if not loop.last %};{% endif %}{% endfor %}
+
+
+listeners=SSL://{{ inventory_hostname }}:9093
+advertised.listeners:SSL://{{ inventory_hostname }}:9093
+
+ssl.keystore.location={{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config/{{ kafka_keystore_location }}
+ssl.keystore.password={{ kafka_keystore_password }}
+ssl.key.password={{ kafka_keystore_password }}
+
+ssl.truststore.location={{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config/{{ kafka_truststore_location }}
+ssl.truststore.password={{ kafka_truststore_password }}
+
+
+log.dirs={{ kafka_data_dir }}
+
+
+broker.id={{ kafka_broker_id }}
+broker.rack={{ kafka_rack }}
