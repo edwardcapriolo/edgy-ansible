@@ -37,13 +37,6 @@
         path: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/bin/kafka-run-class.sh"
         state: absent
 
-#- name: fake binary install
-#  file:
-#    path: "{{ apache_kafka_home }}/apache-kafka-{{ apache_kafka_version }}-bin/"
-#    state: directory
-#    mode: 0755
-
-
 - name: Create config
   file:
     path: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config"

@@ -1,0 +1,6 @@
+security.protocol=SSL
+ssl.truststore.location={{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config/{{ kafka_truststore_location }}
+ssl.truststore.password={{ kafka_truststore_password }}
+ssl.keystore.location={{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}/config/{{ kafka_keystore_location }}
+ssl.keystore.password={{ kafka_keystore_password }}
+ssl.key.password={{ kafka_keystore_password }}
