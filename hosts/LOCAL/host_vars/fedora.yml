@@ -61,7 +61,8 @@ kafka_broker_id: 100
 kafka_rack: "/availability-zone-1"
 kafka_keystore_location: fedora.jks
 kafka_keystore_password: ssshhh
-kafka_server_cn: "CN=fedora"
+#kafka_server_cn: "CN=fedora"
+kafka_server_cn: "User:CN=fedora,OU=arizona unit,O=arizone cert,L=New York,ST=New York,C=US"
 kafka_truststore_location: "myTruststore.jks"
 kafka_truststore_password: "itssecret"
 ### end: edgy-kafka

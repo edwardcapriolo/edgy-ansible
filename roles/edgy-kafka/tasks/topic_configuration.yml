@@ -1,10 +1,35 @@
+- name: Set zookeeper connection string
+  set_fact:
+    zk_connect: "{% for node in kafka_zookeeper %}{{ node.host }}:{{ node.port }}{% if not loop.last %},{% endif %}{% endfor %}"
+- name: Set kafka base path
+  set_fact:
+    base_path: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}"
+
+
+#--command-config
 - name: List currently installed topics
-  command: "{{ apache_kafka_home }}/current/bin/kafka-topics.sh --zookeeper {{ zk_connect }} --list"
+  command: "{{ base_path }}/bin/kafka-topics.sh --bootstrap-server {{ inventory_hostname }}:9093 --command-config {{ base_path }}/config/client-config.properties --list"
   register: list_topics
 
 - name: Create topics not existing
-  command: "{{ apache_kafka_home }}/current/bin/kafka-topics.sh --create --zookeeper {{ zk_connect }} --topic {{ item.topic }}"
+  command: "{{ base_path }}/bin/kafka-topics.sh --create --bootstrap-server {{ inventory_hostname }}:9093 --command-config {{ base_path }}/config/client-config.properties --topic {{ item.topic }}"
   with_items:
     - "{{ topic_configuration }}"
   when: item.topic not in list_topics.stdout_lines
 
+
+#
+#topic_configuration:
+#  - { topic: "topic1", acl_list: [
+#   { operation: "read", principal: "bob" }
+#      ]
+#    }
+#
+#https://stackoverflow.com/questions/31566568/double-loop-ansible
+
+# spacing in " {{ topic.... will kill you below!
+- name: Create ACL
+  #command: " echo {{ item.0.topic }} {{ item.1.principal }} "
+  command: "{{ base_path }}/bin/kafka-acls.sh --add --bootstrap-server {{ inventory_hostname }}:9093 --command-config {{ base_path }}/config/client-config.properties --allow-principal User:{{ item.1.principal }} --producer --transactional-id '*' --topic {{ item.0.topic }} --idempotent"
+  with_subelements: [ "{{ topic_configuration }}", "acl_list" ]
+  when: item.1.operation == "write"
