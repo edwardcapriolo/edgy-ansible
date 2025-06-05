@@ -6,9 +6,13 @@
     base_path: "{{ apache_kafka_home }}/kafka_2.12-{{ apache_kafka_version }}"
 
 
-#--command-config
+#command: "{{ base_path }}/bin/kafka-topics.sh --bootstrap-server {{ inventory_hostname }}:9093 --command-config {{ base_path }}/config/client-config.properties --list"
 - name: List currently installed topics
-  command: "{{ base_path }}/bin/kafka-topics.sh --bootstrap-server {{ inventory_hostname }}:9093 --command-config {{ base_path }}/config/client-config.properties --list"
+  command: >
+    {{ base_path }}/bin/kafka-topics.sh 
+    --bootstrap-server {{ inventory_hostname }}:9093 
+    --command-config {{ base_path }}/config/client-config.properties 
+    --list
   register: list_topics
 
 - name: Create topics not existing
@@ -30,6 +34,14 @@
 # spacing in " {{ topic.... will kill you below!
 - name: Create ACL
   #command: " echo {{ item.0.topic }} {{ item.1.principal }} "
-  command: "{{ base_path }}/bin/kafka-acls.sh --add --bootstrap-server {{ inventory_hostname }}:9093 --command-config {{ base_path }}/config/client-config.properties --allow-principal User:{{ item.1.principal }} --producer --transactional-id '*' --topic {{ item.0.topic }} --idempotent"
+  command: >
+    {{ base_path }}/bin/kafka-acls.sh --add 
+    --bootstrap-server {{ inventory_hostname }}:9093 
+    --command-config {{ base_path }}/config/client-config.properties 
+    --allow-principal User:{{ item.1.principal }} 
+    --producer 
+    --transactional-id '*' 
+    --topic {{ item.0.topic }} 
+    --idempotent
   with_subelements: [ "{{ topic_configuration }}", "acl_list" ]
   when: item.1.operation == "write"
