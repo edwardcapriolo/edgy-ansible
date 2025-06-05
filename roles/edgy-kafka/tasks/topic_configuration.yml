@@ -29,11 +29,11 @@
 #      ]
 #    }
 #
-#https://stackoverflow.com/questions/31566568/double-loop-ansible
+
 
 # spacing in " {{ topic.... will kill you below!
-- name: Create ACL
-  #command: " echo {{ item.0.topic }} {{ item.1.principal }} "
+- name: Create ACL for write operation
+  #https://stackoverflow.com/questions/31566568/double-loop-ansible
   command: >
     {{ base_path }}/bin/kafka-acls.sh --add 
     --bootstrap-server {{ inventory_hostname }}:9093 
@@ -43,5 +43,19 @@
     --transactional-id '*' 
     --topic {{ item.0.topic }} 
     --idempotent
+  with_subelements: [ "{{ topic_configuration }}", "acl_list" ]
+  when: item.1.operation == "write"
+
+
+- name: Create ACL for read operation
+  #https://stackoverflow.com/questions/31566568/double-loop-ansible
+  command: >
+    {{ base_path }}/bin/kafka-acls.sh --add 
+    --bootstrap-server {{ inventory_hostname }}:9093 
+    --command-config {{ base_path }}/config/client-config.properties 
+    --allow-principal User:{{ item.1.principal }} 
+    --consumer
+    --group '*' 
+    --topic {{ item.0.topic }} 
   with_subelements: [ "{{ topic_configuration }}", "acl_list" ]
   when: item.1.operation == "write"
