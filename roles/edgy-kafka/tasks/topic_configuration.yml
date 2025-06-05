@@ -56,6 +56,6 @@
     --allow-principal User:{{ item.1.principal }} 
     --consumer
     --group '*' 
-    --topic {{ item.0.topic }} 
+    --topic {{ item.0.topic }}
   with_subelements: [ "{{ topic_configuration }}", "acl_list" ]
-  when: item.1.operation == "write"
+  when: item.1.operation == "read"
