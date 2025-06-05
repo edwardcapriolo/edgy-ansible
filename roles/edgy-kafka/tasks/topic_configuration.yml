@@ -17,3 +17,19 @@
     - "{{ topic_configuration }}"
   when: item.topic not in list_topics.stdout_lines
 
+
+#
+#topic_configuration:
+#  - { topic: "topic1", acl_list: [
+#   { operation: "read", principal: "bob" }
+#      ]
+#    }
+#
+#https://stackoverflow.com/questions/31566568/double-loop-ansible
+
+# spacing in " {{ topic.... will kill you below!
+- name: Create ACL
+  #command: " echo {{ item.0.topic }} {{ item.1.principal }} "
+  command: "{{ base_path }}/bin/kafka-acls.sh --add --bootstrap-server {{ inventory_hostname }}:9093 --command-config {{ base_path }}/config/client-config.properties --allow-principal User:{{ item.1.principal }} --producer --transactional-id '*' --topic {{ item.0.topic }} --idempotent"
+  with_subelements: [ "{{ topic_configuration }}", "acl_list" ]
+  when: item.1.operation == "write"

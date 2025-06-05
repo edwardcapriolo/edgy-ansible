@@ -1,5 +1,9 @@
+super.users={% for item in kafka_brokers %}{{ hostvars[item]['kafka_server_cn'] }}{% if not loop.last %};{% endif %}{% endfor %}
+
 {% if kafka_zookeeper is defined %}
 zookeeper.connect={% for node in kafka_zookeeper %}{{ node.host }}:{{ node.port }}{% if not loop.last %},{% endif %}{% endfor %}
+
+authorizer.class.name=kafka.security.authorizer.AclAuthorizer
 {% endif %}
 
 {# internode communication will be protected via ssl #}
@@ -11,7 +15,6 @@ ssl.endpoint.identification.algorithm=https
 ssl.enabled.protocols=TLSv1.3
 #ssl.cipher.suites
 
-super.user={% for item in kafka_brokers %}{{ hostvars[item]['kafka_server_cn'] }}{% if not loop.last %};{% endif %}{% endfor %}
 
 
 listeners=SSL://{{ inventory_hostname }}:9093

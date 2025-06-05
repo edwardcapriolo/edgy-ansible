@@ -8,6 +8,6 @@ kafka_zookeeper:
 
 topic_configuration:
   - { topic: "topic1", acl_list: [
-   { operation: "read", principal: "bob" }
-      ]
-    }
+        { operation: "read", principal: "bob" },
+        { operation: "write", principal: "bob" }
+      ] }
