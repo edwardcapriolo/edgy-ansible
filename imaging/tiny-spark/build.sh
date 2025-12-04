@@ -7,11 +7,11 @@ fi
 
 rm spark-3.5.7-bin-hadoop3/yarn/spark-3.5.7-yarn-shuffle.jar
 rm spark-3.5.7-bin-hadoop3/jars/rocksdbjni-8.3.2.jar
-rm spark-3.5.7-bin-hadoop3/python/*
-rm spark-3.5.7-bin-hadoop3/R/*
+rm -rf spark-3.5.7-bin-hadoop3/python/*
+rm -rf spark-3.5.7-bin-hadoop3/R/*
 
 cat << EOF > Dockerfile
-FROM jre-17
+FROM ecapriolo/jre-17:0.0.1
 RUN apk add --no-cache bash
 RUN mkdir /opt/spark
 COPY spark-3.5.7-bin-hadoop3 /opt/spark 
