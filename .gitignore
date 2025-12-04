@@ -3,3 +3,4 @@ roles/edgy-simple-ca/files
 edgy-ansible.iml
 
 edgy-image-setup
+imaging/livy/incubator-livy
