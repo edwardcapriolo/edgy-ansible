@@ -1,1 +1,1 @@
-docker run -it tiny-spark
+docker run -it ecapriolo/tiny-spark
