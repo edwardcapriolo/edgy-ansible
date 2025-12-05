@@ -23,8 +23,8 @@ WORKDIR /livy
 ENTRYPOINT ["/livy/bin/livy-server"]
 
 FROM livy AS livy-and-tiny-spark
-#COPY --from=ecapriolo/tiny-spark:3.5.7-1 /opt/spark /opt/spark
-COPY --from=tiny-spark:latest /opt/spark /opt/spark
+COPY --from=ecapriolo/tiny-spark:3.5.7-2 /opt/spark /opt/spark
+#COPY --from=tiny-spark:latest /opt/spark /opt/spark
 COPY debug_log4j.properties /livy/conf/log4j.properties
 
 EOF
