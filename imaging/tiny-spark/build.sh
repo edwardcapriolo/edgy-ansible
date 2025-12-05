@@ -7,7 +7,8 @@ fi
 
 rm spark-3.5.7-bin-hadoop3/yarn/spark-3.5.7-yarn-shuffle.jar
 rm spark-3.5.7-bin-hadoop3/jars/rocksdbjni-8.3.2.jar
-rm -rf spark-3.5.7-bin-hadoop3/python/*
+# livy seems to want this to launch a spark scala job
+#rm -rf spark-3.5.7-bin-hadoop3/python/*
 rm -rf spark-3.5.7-bin-hadoop3/R/*
 
 cat << EOF > Dockerfile
