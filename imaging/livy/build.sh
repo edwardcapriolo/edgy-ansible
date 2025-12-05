@@ -12,22 +12,31 @@ unzip apache-livy-0.10.0-incubating-SNAPSHOT_2.12-bin.zip
 mv apache-livy-0.10.0-incubating-SNAPSHOT_2.12-bin apache-livy-bin
 
 cat << EOF > Dockerfile
-FROM jre-17
+FROM jre-17 AS livy
 #FROM alpine:3.21.2
 #RUN apk add --no-cache openjdk17-jre-headless
-#RUN apk add --no-cache bash
+RUN apk add --no-cache bash
 RUN mkdir /livy
-#RUN mkdir -p /livy/conf
-#RUN mkdir -p /livy/bin
-#RUN mkdir -p /livy/jars
-#RUN mkdir -p /livy/repl_2.12-jars
-#RUN mkdir -p /livy/rsc-jars
-
+RUN mkdir /livy/logs
 COPY apache-livy-bin /livy
 WORKDIR /livy
 ENTRYPOINT ["/livy/bin/livy-server"]
+
+FROM livy AS livy-and-tiny-spark
+#COPY --from=ecapriolo/tiny-spark:3.5.7-1 /opt/spark /opt/spark
+COPY --from=tiny-spark:latest /opt/spark /opt/spark
+COPY debug_log4j.properties /livy/conf/log4j.properties
+
 EOF
 
 docker build \
 --no-cache \
+--target livy-and-tiny-spark \
+-t livy-and-tiny-spark .
+
+
+docker build \
+--no-cache \
+--target livy \
 -t livy .
+
