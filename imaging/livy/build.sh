@@ -6,19 +6,26 @@ if [ ! -d "incubator-livy" ]; then
   cd ..
 fi
 
+#rebuild
+#cd incubator-livy
+#mvn package -DskipTests=true --projects '!python-api'
+#cd ..
+
 rm -rf apache-livy-bin
 cp incubator-livy/assembly//target/apache-livy-0.10.0-incubating-SNAPSHOT_2.12-bin.zip .
 unzip apache-livy-0.10.0-incubating-SNAPSHOT_2.12-bin.zip
 mv apache-livy-0.10.0-incubating-SNAPSHOT_2.12-bin apache-livy-bin
 
 cat << EOF > Dockerfile
-FROM jre-17 AS livy
-#FROM alpine:3.21.2
-#RUN apk add --no-cache openjdk17-jre-headless
-RUN apk add --no-cache bash
+FROM ecapriolo/jre-17:0.0.1 AS livy
+RUN apk add --no-cache python3 bash
+
+RUN addgroup -S livy && adduser -S -G livy -H -D livy 
 RUN mkdir /livy
-RUN mkdir /livy/logs
+RUN mkdir /livy/logs && chown livy:livy /livy/logs
 COPY apache-livy-bin /livy
+
+USER livy
 WORKDIR /livy
 ENTRYPOINT ["/livy/bin/livy-server"]
 
