@@ -24,7 +24,7 @@ RUN apk add --no-cache gzip bash maven
 #RUN apk add protoc --repository=https://dl-cdn.alpinelinux.org/alpine/v3.19/main
 #RUN apk add protoc
 
-RUN apk add gcompat cmake make gcc g++ openssl-dev zlib-dev snappy-dev
+RUN apk add gcompat cmake make gcc g++ openssl-dev zlib-dev snappy-dev bzip2-dev
 
 COPY build_old_protoc.sh /build_old_protoc.sh
 RUN chmod 777 /build_old_protoc.sh && /build_old_protoc.sh
@@ -44,11 +44,17 @@ RUN cp /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native
 
 FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
-RUN apk add bash
+RUN apk add bash bzip2 openssl snappy zlib
 COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib 
 COPY hadoop-3.4.2 /opt/hadoop
+RUN mkdir -p /opt/edgy/bin
+COPY check_native.sh /opt/edgy/bin
+RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
+
+RUN chmod 777 /opt/edgy/bin/check_native.sh
+
 #-DprotocExecutable=/usr/bin/protoc
-ENTRYPOINT ["hadoop checknative -a"]
+ENTRYPOINT ["/opt/edgy/bin/check_native.sh"]
 
 
 EOF
