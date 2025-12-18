@@ -35,10 +35,9 @@ services:
     environment:
       - "JAVA_HOME=/usr"
       - "HADOOP_LOG_DIR=/tmp/nn1logs"
-    entrypoint: "/opt/hadoop/bin/hdfs"
-    #The docker init command recipe is painful remove comment to init
-    #command: [ "namenode", "-format" ]
-    command: [ "namenode" ]
+      - "SPECIAL_MAYBE_FORMAT_LOCAL_NN=true"
+    entrypoint: "/opt/edgy/bin/special.sh"
+    command: [ "/opt/hadoop/bin/hdfs", "namenode" ]
     ports:
       - "8020:8020"
       - "9870:9870"
