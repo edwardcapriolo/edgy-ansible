@@ -3,4 +3,8 @@
     <name>yarn.resourcemanager.address</name>
     <value>rm1:8032</value>
   </property>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>rm1</value>
+  </property>
 </configuration>

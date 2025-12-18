@@ -6,10 +6,23 @@ services:
     environment:
       - "JAVA_HOME=/usr"
       - "HADOOP_LOG_DIR=/tmp/rm1logs"
-    #  - "HADOOP_CONF_DIR=/hd_conf"
     entrypoint: "/opt/hadoop/bin/yarn"
     command: [ "resourcemanager" ]
     ports:
       - "8088:8088"
+    volumes:
+      - ./hd_conf:/opt/hadoop/etc/hadoop
+
+  nm1:
+    image: tiny-hadoop:latest
+    hostname: nm1
+    container_name: nm1
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/tmp/nm1logs"
+    entrypoint: "/opt/hadoop/bin/yarn"
+    command: [ "nodemanager" ]
+    ports:
+      - "8042:8042"
     volumes:
       - ./hd_conf:/opt/hadoop/etc/hadoop
