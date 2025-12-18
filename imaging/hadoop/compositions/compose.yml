@@ -5,5 +5,11 @@ services:
     container_name: rm1
     environment:
       - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/tmp/rm1logs"
+    #  - "HADOOP_CONF_DIR=/hd_conf"
     entrypoint: "/opt/hadoop/bin/yarn"
     command: [ "resourcemanager" ]
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./hd_conf:/opt/hadoop/etc/hadoop

@@ -1,0 +1,3 @@
+If you have selinux dont forget to do this for mounts!
+
+chcon -Rt svirt_sandbox_file_t /path/to/volume
