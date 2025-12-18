@@ -1,0 +1,9 @@
+services:
+  rm1:
+    image: tiny-hadoop:latest
+    hostname: rm1
+    container_name: rm1
+    environment:
+      - "JAVA_HOME=/usr"
+    entrypoint: "/opt/hadoop/bin/yarn"
+    command: [ "resourcemanager" ]

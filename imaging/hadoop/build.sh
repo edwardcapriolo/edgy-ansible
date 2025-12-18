@@ -10,7 +10,8 @@ fi
 
 rm -rf hadoop-3.4.2/share/doc/
 rm -rf hadoop-3.4.2/share/hadoop/yarn/sources/
-rm -rf hadoop-3.4.2/share/hadoop/yarn/timelineservice/
+
+#rm -rf hadoop-3.4.2/share/hadoop/yarn/timelineservice/
 rm -rf hadoop-3.4.2/share/hadoop/client/hadoop-client-minicluster-3.4.2.jar
 rm -rf hadoop-3.4.2/share/hadoop/common/hadoop-common-3.4.2-tests.jar
 rm -rf hadoop-3.4.2/share/hadoop/common/sources/hadoop-common-3.4.2-test-sources.jar
@@ -41,21 +42,35 @@ COPY exception.c /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/src
 RUN sed -ri 's/^(.*JniBasedUnixGroupsNetgroupMapping.c)/#\1/g' /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/src/CMakeLists.txt
 RUN --mount=type=cache,target=/root/.m2 cd /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common && mvn package -Pnative -DskipTests -Dtar 
 RUN cp /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
+#-DprotocExecutable=/usr/bin/protoc
+
 
 FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
 RUN apk add bash bzip2 openssl snappy zlib
-COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib 
+RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
+
+RUN addgroup -S hdfs && adduser -S -G hdfs -H -D hdfs
+RUN addgroup -S yarn && adduser -S -G yarn -H -D yarn
+RUN addgroup -S auser && adduser -S -G auser -H -D auser
+
+COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
 COPY hadoop-3.4.2 /opt/hadoop
 RUN mkdir -p /opt/edgy/bin
 COPY check_native.sh /opt/edgy/bin
-RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
-
 RUN chmod 777 /opt/edgy/bin/check_native.sh
-
-#-DprotocExecutable=/usr/bin/protoc
+USER auser
 ENTRYPOINT ["/opt/edgy/bin/check_native.sh"]
 
+
+FROM tiny-hadoop AS tiny-yarn
+USER yarn
+ENTRYPOINT ["/opt/hadoop/bin/yarn"]
+
+
+FROM tiny-hadoop AS tiny-hdfs
+USER hdfs
+ENTRYPOINT ["/opt/hadoop/bin/hdfs"]
 
 EOF
 
@@ -66,3 +81,7 @@ DOCKER_BUILDKIT=1 docker build \
 docker build \
 --target tiny-hadoop \
 -t tiny-hadoop .
+
+docker build \
+--target tiny-yarn \
+-t tiny-yarn .
