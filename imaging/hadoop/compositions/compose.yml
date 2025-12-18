@@ -1,6 +1,6 @@
 services:
   rm1:
-    image: tiny-hadoop:latest
+    image: tiny-yarn:latest
     hostname: rm1
     container_name: rm1
     environment:
@@ -12,9 +12,10 @@ services:
       - "8088:8088"
     volumes:
       - ./hd_conf:/opt/hadoop/etc/hadoop
+      - rm1-data:/yarn
 
   nm1:
-    image: tiny-hadoop:latest
+    image: tiny-yarn:latest
     hostname: nm1
     container_name: nm1
     environment:
@@ -26,3 +27,43 @@ services:
       - "8042:8042"
     volumes:
       - ./hd_conf:/opt/hadoop/etc/hadoop
+
+  nn1:
+    image: tiny-hdfs:latest
+    hostname: nn1
+    container_name: nn1
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/tmp/nn1logs"
+    entrypoint: "/opt/hadoop/bin/hdfs"
+    #The docker init command recipe is painful remove comment to init
+    #command: [ "namenode", "-format" ]
+    command: [ "namenode" ]
+    ports:
+      - "8020:8020"
+      - "9870:9870"
+    volumes:
+      - ./hd_conf:/opt/hadoop/etc/hadoop
+      - nn1-data:/hdfs-root
+  dn1:
+    image: tiny-hdfs:latest
+    hostname: dn1
+    container_name: dn1
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/tmp/dn1logs"
+    entrypoint: "/opt/hadoop/bin/hdfs"
+    #The docker init command recipe is painful remove comment to init
+    #command: [ "namenode", "-format" ]
+    command: [ "datanode" ]
+    #ports:
+    #  - "8020:8020"
+    #  - "9870:9870"
+    volumes:
+      - ./hd_conf:/opt/hadoop/etc/hadoop
+      - dn1-data:/hdfs-root
+
+volumes:
+  nn1-data: {}
+  rm1-data: {}
+  dn1-data: {}

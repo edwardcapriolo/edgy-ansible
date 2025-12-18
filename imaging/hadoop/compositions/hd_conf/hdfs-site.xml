@@ -17,5 +17,18 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>nn1:8020</value>
+  </property>
 
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/hdfs-root/nn</value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>/hdfs-root/dn</value>
+  </property>
 </configuration>

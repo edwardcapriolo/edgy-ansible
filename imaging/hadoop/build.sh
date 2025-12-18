@@ -64,11 +64,15 @@ ENTRYPOINT ["/opt/edgy/bin/check_native.sh"]
 
 
 FROM tiny-hadoop AS tiny-yarn
+USER root
+RUN mkdir -p /yarn-root && chown yarn /yarn-root
 USER yarn
 ENTRYPOINT ["/opt/hadoop/bin/yarn"]
 
 
 FROM tiny-hadoop AS tiny-hdfs
+USER root
+RUN mkdir -p /hdfs-root && chown hdfs /hdfs-root
 USER hdfs
 ENTRYPOINT ["/opt/hadoop/bin/hdfs"]
 
@@ -85,3 +89,8 @@ docker build \
 docker build \
 --target tiny-yarn \
 -t tiny-yarn .
+
+docker build \
+--target tiny-hdfs \
+-t tiny-hdfs .
+
