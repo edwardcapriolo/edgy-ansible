@@ -59,6 +59,7 @@ COPY hadoop-3.4.2 /opt/hadoop
 RUN mkdir -p /opt/edgy/bin
 COPY check_native.sh /opt/edgy/bin
 RUN chmod 777 /opt/edgy/bin/check_native.sh
+RUN mkdir -p /auser-root && chown auser /auser-root
 USER auser
 ENTRYPOINT ["/opt/edgy/bin/check_native.sh"]
 
