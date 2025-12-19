@@ -17,4 +17,8 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://nn1:8020</value>
+    </property>
 </configuration>

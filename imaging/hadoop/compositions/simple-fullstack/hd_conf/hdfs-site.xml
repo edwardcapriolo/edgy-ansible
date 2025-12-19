@@ -17,9 +17,11 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
+
+  <!-- defined in core site remove? -->
   <property>
     <name>fs.defaultFS</name>
-    <value>nn1:8020</value>
+    <value>hdfs://nn1:8020</value>
   </property>
 
   <property>

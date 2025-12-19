@@ -62,6 +62,7 @@ RUN chmod 777 /opt/edgy/bin/check_native.sh
 COPY special.sh /opt/edgy/bin/special.sh
 RUN chmod 777 /opt/edgy/bin/special.sh
 
+COPY compositions /compositions
 RUN mkdir -p /auser-root && chown auser /auser-root
 USER auser
 ENTRYPOINT ["/opt/edgy/bin/check_native.sh"]

@@ -8,6 +8,8 @@ services:
       - "HADOOP_LOG_DIR=/tmp/rm1logs"
     entrypoint: "/opt/hadoop/bin/yarn"
     command: [ "resourcemanager" ]
+    networks:
+      - simple-fullstack
     ports:
       - "8088:8088"
     volumes:
@@ -23,6 +25,8 @@ services:
       - "HADOOP_LOG_DIR=/tmp/nm1logs"
     entrypoint: "/opt/hadoop/bin/yarn"
     command: [ "nodemanager" ]
+    networks:
+      - simple-fullstack
     ports:
       - "8042:8042"
     volumes:
@@ -38,6 +42,8 @@ services:
       - "SPECIAL_MAYBE_FORMAT_LOCAL_NN=true"
     entrypoint: "/opt/edgy/bin/special.sh"
     command: [ "/opt/hadoop/bin/hdfs", "namenode" ]
+    networks:
+      - simple-fullstack
     ports:
       - "8020:8020"
       - "9870:9870"
@@ -52,9 +58,9 @@ services:
       - "JAVA_HOME=/usr"
       - "HADOOP_LOG_DIR=/tmp/dn1logs"
     entrypoint: "/opt/hadoop/bin/hdfs"
-    #The docker init command recipe is painful remove comment to init
-    #command: [ "namenode", "-format" ]
     command: [ "datanode" ]
+    networks:
+      - simple-fullstack
     #ports:
     #  - "8020:8020"
     #  - "9870:9870"
@@ -66,3 +72,6 @@ volumes:
   nn1-data: {}
   rm1-data: {}
   dn1-data: {}
+networks:
+  simple-fullstack:
+    driver: bridge
