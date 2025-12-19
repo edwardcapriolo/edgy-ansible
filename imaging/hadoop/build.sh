@@ -47,7 +47,8 @@ RUN cp /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native
 
 FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
-RUN apk add bash bzip2 openssl snappy zlib
+#https://issues.apache.org/jira/browse/HADOOP-19758
+RUN apk add bash bzip2 openssl snappy zlib ncurses
 RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
 
 RUN addgroup -S hdfs && adduser -S -G hdfs -H -D hdfs
