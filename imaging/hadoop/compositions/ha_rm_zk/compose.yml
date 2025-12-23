@@ -1,0 +1,93 @@
+services:
+  rm1:
+    image: tiny-yarn:latest
+    hostname: rm1
+    container_name: rm1
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/yarn-root/rm1logs"
+      - "HADOOP_CONF_DIR=/hd_conf"
+    entrypoint: "/opt/hadoop/bin/yarn"
+    command: [ "resourcemanager" ]
+    networks:
+      - ha-rm-zk
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./hd_conf:/hd_conf
+      - rm1-data:/yarn-root
+
+  rm2:
+    image: tiny-yarn:latest
+    hostname: rm2
+    container_name: rm2
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/yarn-root/rm2logs"
+      - "HADOOP_CONF_DIR=/hd_conf"
+    entrypoint: "/opt/hadoop/bin/yarn"
+    command: [ "resourcemanager" ]
+    networks:
+      - ha-rm-zk
+    ports:
+      - "8089:8088"
+    volumes:
+      - ./hd_conf:/hd_conf
+      - rm2-data:/yarn-root
+
+  zoo1:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
+    networks:
+      - ha-rm-zk
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+
+  zoo2:
+    image: zookeeper
+    restart: always
+    hostname: zoo2
+    networks:
+      - ha-rm-zk
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    hostname: zoo3
+    networks:
+      - ha-rm-zk
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+
+  nm1:
+    image: tiny-yarn:latest
+    hostname: nm1
+    container_name: nm1
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/tmp/nm1logs"
+      - "HADOOP_CONF_DIR=/hd_conf"
+    entrypoint: "/opt/hadoop/bin/yarn"
+    command: [ "nodemanager" ]
+    networks:
+      - ha-rm-zk
+    ports:
+      - "8042:8042"
+    volumes:
+      - ./hd_conf:/hd_conf
+      - nm1-data:/yarn-root
+
+
+volumes:
+  rm1-data: {}
+  rm2-data: {}
+  nm1-data: {}
+networks:
+  ha-rm-zk:
+    driver: bridge

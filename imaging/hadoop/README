@@ -1,9 +1,28 @@
+
 WOrdCount you know you want it
-==================================
-
-
+===
 ```
 sh enter_tiny_container.sh
 export HADOOP_CONFIG_DIR=/compositions/simple-fullstack/hd_conf/
 /opt/hadoop/bin/hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.4.2.jar wordcount hdfs://nn1:8020/tmp/README /tmp/out
 ```
+
+K8S
+===
+If you have built your configuration in such a way that it is sharable across all nodes. This is a nice recipe:
+```
+minikube kubectl create configmap hd_conf --from-file=hd_conf --dry-run=client -o yaml
+
+countainers:
+...
+volumeMounts:
+  - name: config-volume
+    mountPath: /hd_conf
+    readOnly: true
+volumes:
+  - name : config-volume
+    configMap:
+      name: hd_config
+```
+
+
