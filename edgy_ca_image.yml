@@ -1,0 +1,11 @@
+# This play is running openssl shell commands on the node launching the ansible because
+# the generated wil be served from the roles file directory
+- hosts: edgy_image_hadoop
+  connection: local
+  gather_facts: no
+  tasks:
+    - include_role: 
+         name: edgy-simple-ca
+         tasks_from: main.yml
+
+

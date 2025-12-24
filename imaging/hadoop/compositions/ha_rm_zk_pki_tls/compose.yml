@@ -1,0 +1,128 @@
+services:
+  rm1:
+    image: tiny-yarn:latest
+    hostname: rm1
+    container_name: rm1
+    environment:
+      JAVA_HOME: "/usr"
+      HADOOP_LOG_DIR: "/yarn-root/rm1logs"
+      HADOOP_CONF_DIR: "/hd_conf"
+      HADOOP_OPTS: >
+        -Dzookeeper.client.secure=true
+        -Dzkclient.ssl.protocol=TLSv1.3 -Dzookeeper.ssl.protocol=TLSv1.3
+        -Dzookeeper.clientCnxnSocket=org.apache.zookeeper.ClientCnxnSocketNetty
+        -Dzookeeper.ssl.keyStore.location='/mnt/pki-node/rm1.p12'
+        -Dzookeeper.ssl.keyStore.password=ssshhh
+        -Dzookeeper.ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        -Dzookeeper.ssl.hostnameVerification=false
+        -Dzookeeper.ssl.trustStore.password=itssecret
+
+    entrypoint: "/opt/hadoop/bin/yarn"
+    command: [ "resourcemanager" ]
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./hd_conf:/hd_conf
+      - rm1-data:/yarn-root
+      - ./pki/rm1:/mnt/pki-node
+      - ./pki/shared:/mnt/pki-shared
+
+
+  zoo1:
+    image: zookeeper:3.9.4-jre-17
+    restart: always
+    hostname: zoo1
+    volumes:
+      - ./pki/zoo1:/mnt/pki-node
+      - ./pki/shared:/mnt/pki-shared
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+      #SSL_JVM_FLAGS: >
+        #-Dzookeeper.ssl.enabled=true 
+        #-Dzookeeper.serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory 
+        #-Dzookeeper.ssl.keyStore.location=/mnt/pki-node/zoo1.p12
+        #-Dzookeeper.ssl.keyStore.password='ssshhh' 
+        #-Dzookeeper.ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        #-Dzookeeper.ssl.trustStore.password='itssemisecret'
+        #-Dzookeeper.ssl.endpoint.identification.algorithm=false
+      ZOO_CFG_EXTRA: >
+        secureClientPort=2182
+        serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
+        ssl.enabled=true
+        ssl.keyStore.location=/mnt/pki-node/zoo1.jks
+        ssl.keyStore.password=ssshhh
+        ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        ssl.trustStore.password=itssecret
+        ssl.trustStore.type=jks
+
+
+  zoo2:
+    image: zookeeper:3.9.4-jre-17
+    restart: always
+    hostname: zoo2
+    volumes:
+      - ./pki/zoo2:/mnt/pki-node
+      - ./pki/shared:/mnt/pki-shared
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+      ZOO_CFG_EXTRA: >
+        secureClientPort=2182
+        serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
+        ssl.enabled=true
+        ssl.keyStore.location=/mnt/pki-node/zoo2.jks
+        ssl.keyStore.password=ssshhh
+        ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        ssl.trustStore.password=itssecret
+        ssl.trustStore.type=jks
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    hostname: zoo3
+    volumes:
+      - ./pki/zoo3:/mnt/pki-node
+      - ./pki/shared:/mnt/pki-shared
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+
+      ZOO_CFG_EXTRA: >
+        secureClientPort=2182
+        serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
+        ssl.enabled=true
+        ssl.keyStore.location=/mnt/pki-node/zoo3.jks
+        ssl.keyStore.password=ssshhh
+        ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        ssl.trustStore.password=itssecret
+        ssl.trustStore.type=jks
+
+
+  nm1:
+    image: tiny-yarn:latest
+    hostname: nm1
+    container_name: nm1
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/tmp/nm1logs"
+      - "HADOOP_CONF_DIR=/hd_conf"
+    entrypoint: "/opt/hadoop/bin/yarn"
+    command: [ "nodemanager" ]
+    ports:
+      - "8042:8042"
+    volumes:
+      - ./hd_conf:/hd_conf
+      - nm1-data:/yarn-root
+
+
+volumes:
+  rm1-data: {}
+  rm2-data: {}
+  nm1-data: {}
+
+networks:
+  ha_rm_zk_pki_tls:
+    driver: bridge
+  default:
+    name: ha_rm_zk_pki_tls

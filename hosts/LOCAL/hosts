@@ -9,3 +9,14 @@ fedora
 
 [edgy_kafka]
 fedora
+
+[edgy_image_hadoop]
+rm1 CLIENT_FQDN=rm1
+rm2 CLIENT_FQDN=rm2
+zoo1 CLIENT_FQDN=zoo1
+zoo2 CLIENT_FQDN=zoo2
+zoo3 CLIENT_FQDN=zoo3
+nm1 CLIENT_FQDN=nm1
+nm2 CLIENT_FQDN=nm2
+nm3 CLIENT_FQDN=nm3
+nm4 CLIENT_FQDN=nm4
