@@ -37,7 +37,7 @@ services:
       - ./pki/shared:/mnt/pki-shared
     environment:
       ZOO_MY_ID: 1
-      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2182 server.2=zoo2:2888:3888;2182 server.3=zoo3:2888:3888;2182"
       #SSL_JVM_FLAGS: >
         #-Dzookeeper.ssl.enabled=true 
         #-Dzookeeper.serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory 
@@ -55,6 +55,11 @@ services:
         ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
         ssl.trustStore.password=itssecret
         ssl.trustStore.type=jks
+        sslQuorum=true
+        ssl.quorum.keyStore.location=/mnt/pki-node/zoo1.jks
+        ssl.quorum.keyStore.password=ssshhh
+        ssl.quorum.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        ssl.quorum.trustStore.password=itssecret
 
 
   zoo2:
@@ -66,7 +71,7 @@ services:
       - ./pki/shared:/mnt/pki-shared
     environment:
       ZOO_MY_ID: 2
-      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2182 server.2=zoo2:2888:3888;2182 server.3=zoo3:2888:3888;2182"
       ZOO_CFG_EXTRA: >
         secureClientPort=2182
         serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
@@ -76,6 +81,11 @@ services:
         ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
         ssl.trustStore.password=itssecret
         ssl.trustStore.type=jks
+        sslQuorum=true
+        ssl.quorum.keyStore.location=/mnt/pki-node/zoo2.jks
+        ssl.quorum.keyStore.password=ssshhh
+        ssl.quorum.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        ssl.quorum.trustStore.password=itssecret
 
   zoo3:
     image: zookeeper
@@ -86,7 +96,7 @@ services:
       - ./pki/shared:/mnt/pki-shared
     environment:
       ZOO_MY_ID: 3
-      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2182 server.2=zoo2:2888:3888;2182 server.3=zoo3:2888:3888;2182"
 
       ZOO_CFG_EXTRA: >
         secureClientPort=2182
@@ -97,6 +107,11 @@ services:
         ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
         ssl.trustStore.password=itssecret
         ssl.trustStore.type=jks
+        sslQuorum=true
+        ssl.quorum.keyStore.location=/mnt/pki-node/zoo3.jks
+        ssl.quorum.keyStore.password=ssshhh
+        ssl.quorum.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        ssl.quorum.trustStore.password=itssecret
 
 
   nm1:
