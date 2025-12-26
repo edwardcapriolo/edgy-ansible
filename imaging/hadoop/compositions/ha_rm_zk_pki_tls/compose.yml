@@ -131,9 +131,12 @@ services:
     command: [ "nodemanager" ]
     ports:
       - "8042:8042"
+      - "8044:8044"
     volumes:
       - ./hd_conf:/hd_conf
       - nm1-data:/yarn-root
+      - ./pki/nm1:/mnt/pki-server
+      - ./pki/shared:/mnt/pki-shared
 
 
 volumes:
