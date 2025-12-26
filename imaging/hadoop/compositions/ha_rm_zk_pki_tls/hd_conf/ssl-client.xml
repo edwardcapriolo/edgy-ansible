@@ -1,0 +1,29 @@
+<configuration>
+
+  <property>
+    <name>ssl.client.keystore.type</name>
+    <value>jks</value>
+  </property>
+  <property>
+    <name>ssl.client.keystore.location</name>
+    <value>/mnt/pki-server/server.jks</value>
+  </property>
+  <property>
+    <name>ssl.client.keystore.password</name>
+    <value>ssshhh</value>
+  </property>
+
+  <property>
+    <name>ssl.client.truststore.type</name>
+    <value>jks</value>
+  </property>
+  <property>
+    <name>ssl.client.truststore.location</name>
+    <value>/mnt/pki-shared/myTruststore.jks</value>
+  </property>
+  <property>
+    <name>ssl.client.truststore.password</name>
+    <value>itssecret</value>
+  </property>
+
+</configuration>

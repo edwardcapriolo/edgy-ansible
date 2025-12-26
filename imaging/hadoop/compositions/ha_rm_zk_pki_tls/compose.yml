@@ -16,16 +16,21 @@ services:
         -Dzookeeper.ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
         -Dzookeeper.ssl.hostnameVerification=false
         -Dzookeeper.ssl.trustStore.password=itssecret
+      YARN_RESOURCEMANAGER_OPTS: >
+        -DOFFjavax.net.debug=all
+        
 
     entrypoint: "/opt/hadoop/bin/yarn"
     command: [ "resourcemanager" ]
     ports:
       - "8088:8088"
+      - "8090:8090"
     volumes:
       - ./hd_conf:/hd_conf
       - rm1-data:/yarn-root
       - ./pki/rm1:/mnt/pki-node
       - ./pki/shared:/mnt/pki-shared
+      - ./pki/rm1:/mnt/pki-server
 
 
   zoo1:

@@ -88,5 +88,18 @@
   </property>
   -->
 
+  <property>
+    <name>yarn.resourcemanager.application-https.policy</name>
+    <value>LENIENT</value>
+    <!-- move to strict -->
+ </property>
 
+  <property>
+    <name>yarn.http.policy</name>
+    <value>HTTPS_ONLY</value>
+  </property>
+ <!-- stuff to play with
+  yarn.resourcemanager.zk-acl
+  yarn.resourcemanager.zk-auth
+ -->
 </configuration>
