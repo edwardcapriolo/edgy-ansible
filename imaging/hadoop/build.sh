@@ -1,4 +1,7 @@
-./inc.sh
+#!/bin/bash
+set -e
+
+#./inc.sh
 if [ ! -e "hadoop-3.4.2-src.tar.gz" ]; then
   curl https://dlcdn.apache.org/hadoop/common/hadoop-3.4.2/hadoop-3.4.2-src.tar.gz -O
 fi
@@ -44,11 +47,21 @@ RUN --mount=type=cache,target=/root/.m2 cd /build/hadoop-3.4.2-src/hadoop-common
 RUN cp /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
 #-DprotocExecutable=/usr/bin/protoc
 
+#Did all this to get limit.h.
+#linux/limits.h != limits.h https://stackoverflow.com/questions/73168335/difference-between-include-limits-h-and-inlcude-linux-limits-h
+#you learn something new every day
+RUN apk add --no-cache libmagic musl-dev file-dev file linux-headers
+RUN --mount=type=cache,target=/root/.m2 cd /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager \
+&& mvn package -Pnative -Dmaven.skip.test=true -DskipTests -Dtar
+#-Dmaven.skip.test=true -DskipTests
+RUN cp /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/libcontainer.a /usr/local/lib
+#container-executor  oom-listener  test-container-executor
+#RUN cp /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/target/usr/local/bin/container-executor /usr/local/bin
 
 FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
 #https://issues.apache.org/jira/browse/HADOOP-19758
-RUN apk add bash bzip2 openssl snappy zlib ncurses
+RUN apk add --no-cache bash bzip2 openssl snappy zlib ncurses
 RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
 
 RUN addgroup -S hdfs && adduser -S -G hdfs -H -D hdfs
@@ -56,6 +69,8 @@ RUN addgroup -S yarn && adduser -S -G yarn -H -D yarn
 RUN addgroup -S auser && adduser -S -G auser -H -D auser
 
 COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
+
+COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/target/usr/local/bin/ /usr/local/bin
 COPY hadoop-3.4.2 /opt/hadoop
 RUN mkdir -p /opt/edgy/bin
 COPY check_native.sh /opt/edgy/bin
