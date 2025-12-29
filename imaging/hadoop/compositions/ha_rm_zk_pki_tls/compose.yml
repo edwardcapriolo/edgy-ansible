@@ -126,10 +126,42 @@ services:
       - ./pki/nm1:/mnt/pki-server
       - ./pki/shared:/mnt/pki-shared
 
+  #These here are not HA or encrypted only here to run examples in a more compelling way
+  nn1:
+    image: tiny-hdfs:latest
+    hostname: nn1
+    container_name: nn1
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/tmp/nn1logs"
+      - "SPECIAL_MAYBE_FORMAT_LOCAL_NN=true"
+    entrypoint: "/opt/edgy/bin/special.sh"
+    command: [ "/opt/hadoop/bin/hdfs", "namenode" ]
+    ports:
+      - "8020:8020"
+      - "9870:9870"
+    volumes:
+      - ./hd_conf:/opt/hadoop/etc/hadoop
+      - nn1-data:/hdfs-root
+  dn1:
+    image: tiny-hdfs:latest
+    hostname: dn1
+    container_name: dn1
+    environment:
+      - "JAVA_HOME=/usr"
+      - "HADOOP_LOG_DIR=/tmp/dn1logs"
+    entrypoint: "/opt/hadoop/bin/hdfs"
+    command: [ "datanode" ]
+    volumes:
+      - ./hd_conf:/opt/hadoop/etc/hadoop
+      - dn1-data:/hdfs-root
+
 volumes:
   rm1-data: {}
   rm2-data: {}
   nm1-data: {}
+  nn1-data: {}
+  dn1-data: {}
 
 networks:
   ha_rm_zk_pki_tls:
