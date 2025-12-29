@@ -53,41 +53,51 @@ RUN cp /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native
 RUN apk add --no-cache libmagic musl-dev file-dev file linux-headers
 RUN --mount=type=cache,target=/root/.m2 cd /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager \
 && mvn package -Pnative -Dmaven.skip.test=true -DskipTests -Dtar
-#-Dmaven.skip.test=true -DskipTests
+
 RUN cp /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/libcontainer.a /usr/local/lib
-#container-executor  oom-listener  test-container-executor
-#RUN cp /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/target/usr/local/bin/container-executor /usr/local/bin
 
 FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
-#https://issues.apache.org/jira/browse/HADOOP-19758
-RUN apk add --no-cache bash bzip2 openssl snappy zlib ncurses
-RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
+  #https://issues.apache.org/jira/browse/HADOOP-19758
+  RUN apk add --no-cache bash bzip2 openssl snappy zlib ncurses
+  RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
 
-RUN addgroup -S hdfs && adduser -S -G hdfs -H -D hdfs
-RUN addgroup -S yarn && adduser -S -G yarn -H -D yarn
-RUN addgroup -S auser && adduser -S -G auser -H -D auser
+  RUN addgroup -S hadoop
+  RUN addgroup -S hdfs && adduser -S -G hdfs -H -D hdfs
+  RUN addgroup -S yarn && adduser -S -G yarn -H -D yarn
+  RUN addgroup -S auser && adduser -S -G auser -H -D auser
 
-COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
+  COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
 
-COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/target/usr/local/bin/ /usr/local/bin
-COPY hadoop-3.4.2 /opt/hadoop
-RUN mkdir -p /opt/edgy/bin
-COPY check_native.sh /opt/edgy/bin
-RUN chmod 777 /opt/edgy/bin/check_native.sh
-COPY special.sh /opt/edgy/bin/special.sh
-RUN chmod 777 /opt/edgy/bin/special.sh
+  COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/target/usr/local/bin/ /usr/local/bin
+  RUN mkdir -p /usr/local/etc/hadoop
+  COPY container-executor.cfg /usr/local/etc/hadoop/container-executor.cfg
+  RUN chown root:root /usr/local/etc/hadoop/container-executor.cfg
+  RUN chmod 6050 /usr/local/bin/container-executor
+  RUN chgrp hadoop /usr/local/bin/container-executor
 
-COPY compositions /compositions
-RUN mkdir -p /auser-root && chown auser /auser-root
-USER auser
-ENTRYPOINT ["/opt/edgy/bin/check_native.sh"]
+
+  COPY hadoop-3.4.2 /opt/hadoop
+  RUN mkdir -p /opt/edgy/bin
+  COPY check_native.sh /opt/edgy/bin
+  RUN chmod 777 /opt/edgy/bin/check_native.sh
+  COPY special.sh /opt/edgy/bin/special.sh
+  RUN chmod 777 /opt/edgy/bin/special.sh
+
+
+
+  COPY compositions /compositions
+  RUN mkdir -p /auser-root && chown auser /auser-root
+  USER auser
+  ENTRYPOINT ["/opt/edgy/bin/check_native.sh"]
 
 
 FROM tiny-hadoop AS tiny-yarn
 USER root
 RUN mkdir -p /yarn-root && chown yarn /yarn-root
-USER yarn
+
+RUN chmod 6050 /usr/local/bin/container-executor
+USER yarn:hadoop
 ENTRYPOINT ["/opt/hadoop/bin/yarn"]
 
 

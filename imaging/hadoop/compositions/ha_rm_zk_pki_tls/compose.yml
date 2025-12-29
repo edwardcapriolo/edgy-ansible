@@ -18,7 +18,6 @@ services:
         -Dzookeeper.ssl.trustStore.password=itssecret
       YARN_RESOURCEMANAGER_OPTS: >
         -DOFFjavax.net.debug=all
-        
 
     entrypoint: "/opt/hadoop/bin/yarn"
     command: [ "resourcemanager" ]
@@ -32,7 +31,6 @@ services:
       - ./pki/shared:/mnt/pki-shared
       - ./pki/rm1:/mnt/pki-server
 
-
   zoo1:
     image: zookeeper:3.9.4-jre-17
     restart: always
@@ -43,14 +41,6 @@ services:
     environment:
       ZOO_MY_ID: 1
       ZOO_SERVERS: "server.1=zoo1:2888:3888;2182 server.2=zoo2:2888:3888;2182 server.3=zoo3:2888:3888;2182"
-      #SSL_JVM_FLAGS: >
-        #-Dzookeeper.ssl.enabled=true 
-        #-Dzookeeper.serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory 
-        #-Dzookeeper.ssl.keyStore.location=/mnt/pki-node/zoo1.p12
-        #-Dzookeeper.ssl.keyStore.password='ssshhh' 
-        #-Dzookeeper.ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
-        #-Dzookeeper.ssl.trustStore.password='itssemisecret'
-        #-Dzookeeper.ssl.endpoint.identification.algorithm=false
       ZOO_CFG_EXTRA: >
         secureClientPort=2182
         serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
@@ -65,7 +55,6 @@ services:
         ssl.quorum.keyStore.password=ssshhh
         ssl.quorum.trustStore.location=/mnt/pki-shared/myTruststore.jks
         ssl.quorum.trustStore.password=itssecret
-
 
   zoo2:
     image: zookeeper:3.9.4-jre-17
@@ -118,7 +107,6 @@ services:
         ssl.quorum.trustStore.location=/mnt/pki-shared/myTruststore.jks
         ssl.quorum.trustStore.password=itssecret
 
-
   nm1:
     image: tiny-yarn:latest
     hostname: nm1
@@ -137,7 +125,6 @@ services:
       - nm1-data:/yarn-root
       - ./pki/nm1:/mnt/pki-server
       - ./pki/shared:/mnt/pki-shared
-
 
 volumes:
   rm1-data: {}

@@ -98,8 +98,29 @@
     <name>yarn.http.policy</name>
     <value>HTTPS_ONLY</value>
   </property>
- <!-- stuff to play with
-  yarn.resourcemanager.zk-acl
-  yarn.resourcemanager.zk-auth
- -->
+
+
+  <!-- this is for the container executor -->
+  <property>
+    <name>yarn.nodemanager.container-executor.class</name>
+    <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.group</name>
+    <value>hadoop</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.path</name>
+    <value>/usr/local/bin/container-executor</value>
+  </property>
+
+
+
+
+  <!-- stuff to play with
+   yarn.resourcemanager.zk-acl
+   yarn.resourcemanager.zk-auth
+  -->
 </configuration>
