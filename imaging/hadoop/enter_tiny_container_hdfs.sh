@@ -1,1 +1,3 @@
-docker run --network simple-fullstack_default --user hdfs -e JAVA_HOME=/usr -it --entrypoint /bin/bash tiny-hadoop
+docker run -e JAVA_HOME=/usr
+-v type=cache,src=<volume-name>,dst=<container-path>
+-it --entrypoint /bin/bash hadoop-build

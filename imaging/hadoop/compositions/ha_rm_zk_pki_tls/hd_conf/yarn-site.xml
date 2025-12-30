@@ -86,7 +86,6 @@
     <name>yarn.acl.enabled</name>
     <value>true</value>
   </property>
-  -->
 
   <property>
     <name>yarn.resourcemanager.application-https.policy</name>
@@ -116,8 +115,18 @@
     <value>/usr/local/bin/container-executor</value>
   </property>
 
+  <!--
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.nonsecure-mode.local-user</name>
+    <value>nobody</value>
+  </property>
+  -->
 
-
+  <!-- in non secure alllow other users -->
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.nonsecure-mode.limit-users</name>
+    <value>false</value>
+  </property>
 
   <!-- stuff to play with
    yarn.resourcemanager.zk-acl

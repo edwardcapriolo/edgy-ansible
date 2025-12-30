@@ -84,7 +84,8 @@ FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
   COPY special.sh /opt/edgy/bin/special.sh
   RUN chmod 777 /opt/edgy/bin/special.sh
 
-
+  #COPY 99-hdfs-profile.sh /etc/profile.d/99-hdfs-profile.sh
+  #RUN echo "export PATH=\$PATH:/opt/hadoop/bin" >> /etc/profile
 
   COPY compositions /compositions
   RUN mkdir -p /auser-root && chown auser /auser-root
