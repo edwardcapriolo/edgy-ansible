@@ -40,7 +40,8 @@ services:
       - ./pki/shared:/mnt/pki-shared
     environment:
       ZOO_MY_ID: 1
-      ZOO_SERVERS: "server.1=zoo1:2888:3888;2182 server.2=zoo2:2888:3888;2182 server.3=zoo3:2888:3888;2182"
+      ZOO_SECURE_CLIENT_PORT: 2182
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
       ZOO_CFG_EXTRA: >
         secureClientPort=2182
         serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
@@ -58,14 +59,15 @@ services:
 
   zoo2:
     image: zookeeper:3.9.4-jre-17
-    restart: always
+#    restart: always
     hostname: zoo2
     volumes:
       - ./pki/zoo2:/mnt/pki-node
       - ./pki/shared:/mnt/pki-shared
     environment:
       ZOO_MY_ID: 2
-      ZOO_SERVERS: "server.1=zoo1:2888:3888;2182 server.2=zoo2:2888:3888;2182 server.3=zoo3:2888:3888;2182"
+      ZOO_SECURE_CLIENT_PORT: 2182
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
       ZOO_CFG_EXTRA: >
         secureClientPort=2182
         serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
@@ -83,7 +85,7 @@ services:
 
   zoo3:
     image: zookeeper
-    restart: always
+    #restart: always
     hostname: zoo3
 
     volumes:
@@ -91,7 +93,8 @@ services:
       - ./pki/shared:/mnt/pki-shared
     environment:
       ZOO_MY_ID: 3
-      ZOO_SERVERS: "server.1=zoo1:2888:3888;2182 server.2=zoo2:2888:3888;2182 server.3=zoo3:2888:3888;2182"
+      ZOO_SECURE_CLIENT_PORT: 2182
+      ZOO_SERVERS: "server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181"
 
       ZOO_CFG_EXTRA: >
         secureClientPort=2182
