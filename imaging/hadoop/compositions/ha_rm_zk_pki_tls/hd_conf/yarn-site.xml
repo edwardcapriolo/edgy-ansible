@@ -81,6 +81,7 @@
     <name>yarn.resourcemanager.scheduler.class</name>
     <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value>
   </property>
+  -->
 
   <property>
     <name>yarn.acl.enabled</name>
@@ -90,7 +91,6 @@
   <property>
     <name>yarn.resourcemanager.application-https.policy</name>
     <value>LENIENT</value>
-    <!-- move to strict -->
  </property>
 
   <property>

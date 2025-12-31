@@ -2,19 +2,30 @@
 set -e
 
 #./inc.sh
-if [ ! -e "hadoop-3.4.2-src.tar.gz" ]; then
-  curl https://dlcdn.apache.org/hadoop/common/hadoop-3.4.2/hadoop-3.4.2-src.tar.gz -O
-fi
 
 if [ ! -e "hadoop-3.4.2-lean.tar.gz" ]; then
- curl https://dlcdn.apache.org/hadoop/common/hadoop-3.4.2/hadoop-3.4.2-lean.tar.gz -O
- tar -xf hadoop-3.4.2-lean.tar.gz
+  curl https://dlcdn.apache.org/hadoop/common/hadoop-3.4.2/hadoop-3.4.2-lean.tar.gz -O
+  tar -xf hadoop-3.4.2-lean.tar.gz
+fi
+
+#Work with src tar or git
+B_SRC="git"
+if [ ! -e "hd_src" ]; then
+  if [ "$B_SRC" == "git" ]; then
+    if [ ! -e "hadoop" ]; then
+      git clone git@github.com:edwardcapriolo/hadoop.git hd_src
+    fi
+  else
+    if [ ! -e "hadoop-3.4.2-src.tar.gz" ]; then
+      curl https://dlcdn.apache.org/hadoop/common/hadoop-3.4.2/hadoop-3.4.2-src.tar.gz -O
+    fi
+    tar -xf hadoop-3.4.2-src.tar.gz
+    mv hadoop-3.4.2-src hd_src
+  fi
 fi
 
 rm -rf hadoop-3.4.2/share/doc/
 rm -rf hadoop-3.4.2/share/hadoop/yarn/sources/
-
-#rm -rf hadoop-3.4.2/share/hadoop/yarn/timelineservice/
 rm -rf hadoop-3.4.2/share/hadoop/client/hadoop-client-minicluster-3.4.2.jar
 rm -rf hadoop-3.4.2/share/hadoop/common/hadoop-common-3.4.2-tests.jar
 rm -rf hadoop-3.4.2/share/hadoop/common/sources/hadoop-common-3.4.2-test-sources.jar
@@ -24,37 +35,44 @@ rm -rf hadoop-3.4.2/share/hadoop/yarn/hadoop-yarn-applications-catalog-webapp-3.
 cat << EOF > Dockerfile
 FROM ecapriolo/jre-17:0.0.1 AS hadoop-build
 RUN apk add --no-cache gzip bash maven
+
 # old protoc is neededhere
 #RUN apk add protoc --repository=https://dl-cdn.alpinelinux.org/alpine/v3.19/main
 #RUN apk add protoc
 
-RUN apk add gcompat cmake make gcc g++ openssl-dev zlib-dev snappy-dev bzip2-dev
+RUN apk add --no-cache gcompat cmake make gcc g++ openssl-dev zlib-dev snappy-dev bzip2-dev
 
-COPY build_old_protoc.sh /build_old_protoc.sh
-RUN chmod 777 /build_old_protoc.sh && /build_old_protoc.sh
+#COPY build_old_protoc.sh /build_old_protoc.sh
+#RUN chmod 777 /build_old_protoc.sh && /build_old_protoc.sh
 
 RUN mkdir /build
-COPY hadoop-3.4.2-src.tar.gz /build
-COPY hadoop-3.4.2 /build
+COPY hd_src/ /build/hd_src
+COPY hadoop-3.4.2 /build/hadoop-3.4.2
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 WORKDIR /build
 RUN cd /build
-RUN tar -xf hadoop-3.4.2-src.tar.gz 
+
 #alpine patch
-COPY exception.c /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
-RUN sed -ri 's/^(.*JniBasedUnixGroupsNetgroupMapping.c)/#\1/g' /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/src/CMakeLists.txt
-RUN --mount=type=cache,target=/root/.m2 cd /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common && mvn package -Pnative -DskipTests -Dtar 
-RUN cp /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
-#-DprotocExecutable=/usr/bin/protoc
+COPY exception.c /build/hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
+COPY yarn-csi-pom.xml /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
+
+RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/ && mvn install -DskipTests
+#RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-project && mvn install -DskipTests
+#RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-build-tools && mvn install -DskipTests
+#RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-maven-plugins && mvn install -DskipTests
+
+RUN sed -ri 's/^(.*JniBasedUnixGroupsNetgroupMapping.c)/#\1/g' /build/hd_src/hadoop-common-project/hadoop-common/src/CMakeLists.txt
+RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-common-project/hadoop-common && mvn package -Pnative -DskipTests -Dtar
+RUN cp /build/hd_src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
 
 #Did all this to get limit.h.
 #linux/limits.h != limits.h https://stackoverflow.com/questions/73168335/difference-between-include-limits-h-and-inlcude-linux-limits-h
 #you learn something new every day
 RUN apk add --no-cache libmagic musl-dev file-dev file linux-headers
-RUN --mount=type=cache,target=/root/.m2 cd /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager \
+RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager \
 && mvn package -Pnative -Dmaven.skip.test=true -DskipTests -Dtar
 
-RUN cp /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/libcontainer.a /usr/local/lib
+#RUN cp /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/libcontainer.a /usr/local/lib
 
 FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
@@ -67,9 +85,9 @@ FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
   RUN addgroup -S yarn && adduser -S -G yarn -H -D yarn
   RUN addgroup -S auser && adduser -S -G auser -H -D auser
 
-  COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
+  COPY --from=hadoop-build /build/hd_src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
 
-  COPY --from=hadoop-build /build/hadoop-3.4.2-src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/target/usr/local/bin/ /usr/local/bin
+  COPY --from=hadoop-build /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/target/native/target/usr/local/bin/ /usr/local/bin
   RUN mkdir -p /usr/local/etc/hadoop
   COPY container-executor.cfg /usr/local/etc/hadoop/container-executor.cfg
   RUN chown root:root /usr/local/etc/hadoop/container-executor.cfg
@@ -125,4 +143,3 @@ docker build \
 docker build \
 --target tiny-hdfs \
 -t tiny-hdfs .
-

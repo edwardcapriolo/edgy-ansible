@@ -33,7 +33,7 @@ services:
 
   zoo1:
     image: zookeeper:3.9.4-jre-17
-    restart: always
+  #  restart: always
     hostname: zoo1
     volumes:
       - ./pki/zoo1:/mnt/pki-node
@@ -85,6 +85,7 @@ services:
     image: zookeeper
     restart: always
     hostname: zoo3
+
     volumes:
       - ./pki/zoo3:/mnt/pki-node
       - ./pki/shared:/mnt/pki-shared
@@ -155,6 +156,7 @@ services:
     volumes:
       - ./hd_conf:/opt/hadoop/etc/hadoop
       - dn1-data:/hdfs-root
+      - ./pki/shared:/mnt/pki-shared
 
 volumes:
   rm1-data: {}
@@ -164,7 +166,7 @@ volumes:
   dn1-data: {}
 
 networks:
-  ha_rm_zk_pki_tls:
+  ha_rm_1:
     driver: bridge
   default:
-    name: ha_rm_zk_pki_tls
+    name: ha_rm_1
