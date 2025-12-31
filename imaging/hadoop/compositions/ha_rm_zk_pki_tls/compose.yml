@@ -31,6 +31,38 @@ services:
       - ./pki/shared:/mnt/pki-shared
       - ./pki/rm1:/mnt/pki-server
 
+  rm2:
+    image: tiny-yarn:latest
+    hostname: rm2
+    container_name: rm2
+    environment:
+      JAVA_HOME: "/usr"
+      HADOOP_LOG_DIR: "/yarn-root/rm2logs"
+      HADOOP_CONF_DIR: "/hd_conf"
+      HADOOP_OPTS: >
+        -Dzookeeper.client.secure=true
+        -Dzkclient.ssl.protocol=TLSv1.3 -Dzookeeper.ssl.protocol=TLSv1.3
+        -Dzookeeper.clientCnxnSocket=org.apache.zookeeper.ClientCnxnSocketNetty
+        -Dzookeeper.ssl.keyStore.location='/mnt/pki-node/rm2.p12'
+        -Dzookeeper.ssl.keyStore.password=ssshhh
+        -Dzookeeper.ssl.trustStore.location=/mnt/pki-shared/myTruststore.jks
+        -Dzookeeper.ssl.hostnameVerification=false
+        -Dzookeeper.ssl.trustStore.password=itssecret
+      YARN_RESOURCEMANAGER_OPTS: >
+        -DOFFjavax.net.debug=all
+
+    entrypoint: "/opt/hadoop/bin/yarn"
+    command: [ "resourcemanager" ]
+    ports:
+      - "8089:8088"
+      - "8091:8090"
+    volumes:
+      - ./hd_conf:/hd_conf
+      - rm1-data:/yarn-root
+      - ./pki/rm2:/mnt/pki-node
+      - ./pki/shared:/mnt/pki-shared
+      - ./pki/rm2:/mnt/pki-server
+
   zoo1:
     image: zookeeper:3.9.4-jre-17
   #  restart: always

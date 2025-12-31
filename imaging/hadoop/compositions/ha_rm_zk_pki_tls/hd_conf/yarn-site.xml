@@ -39,18 +39,35 @@
     <name>yarn.resourcemanager.hostname.rm1</name>
     <value>rm1</value>
   </property>
+
   <property>
     <name>yarn.resourcemanager.webapp.address.rm1</name>
-    <value>rm1:8088</value>
+    <value>rm1:8090</value>
   </property>
+  <property>
+    <name>yarn.resourcemanager.webapp.https.address.rm1</name>
+    <value>rm1:8090</value>
+  </property>
+
 
   <property>
     <name>yarn.resourcemanager.hostname.rm2</name>
     <value>rm2</value>
   </property>
+
   <property>
     <name>yarn.resourcemanager.webapp.address.rm2</name>
     <value>rm2:8088</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.webapp.https.address.rm2</name>
+    <value>rm2:8090</value>
+  </property>
+
+  <!--fallback-->
+  <property>
+    <name>yarn.resourcemanager.webapp.address</name>
+    <value>rm1:8090</value>
   </property>
 
   <!-- the rm and nm share a configuration file -->
@@ -100,20 +117,23 @@
 
 
   <!-- this is for the container executor -->
+  <!--
   <property>
     <name>yarn.nodemanager.container-executor.class</name>
     <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
   </property>
-
+  -->
   <property>
     <name>yarn.nodemanager.linux-container-executor.group</name>
     <value>hadoop</value>
   </property>
 
+
   <property>
     <name>yarn.nodemanager.linux-container-executor.path</name>
     <value>/usr/local/bin/container-executor</value>
   </property>
+
 
   <!--
   <property>

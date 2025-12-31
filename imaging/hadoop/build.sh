@@ -77,7 +77,9 @@ RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-yarn-project/had
 FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
   #https://issues.apache.org/jira/browse/HADOOP-19758
-  RUN apk add --no-cache bash bzip2 openssl snappy zlib ncurses
+  #busybox find is not posixcompliant (does not support  -l or -s)
+  RUN apk add --no-cache bash bzip2 openssl snappy zlib ncurses \
+    findutils
   RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
 
   RUN addgroup -S hadoop
