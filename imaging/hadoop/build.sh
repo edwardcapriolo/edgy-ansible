@@ -54,7 +54,7 @@ RUN cd /build
 
 #alpine patch
 COPY exception.c /build/hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
-COPY yarn-csi-pom.xml /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
+  COPY yarn-csi-pom.xml /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
 
 RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/ && mvn install -DskipTests
 #RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-project && mvn install -DskipTests
@@ -78,8 +78,12 @@ FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
   #https://issues.apache.org/jira/browse/HADOOP-19758
   #busybox find is not posixcompliant (does not support  -l or -s)
-  RUN apk add --no-cache bash bzip2 openssl snappy zlib ncurses \
-    findutils
+  RUN apk add --no-cache bash bzip2 fts fuse libtirpc openssl snappy zlib  ncurses \
+    findutils file
+
+  #debug tools flag needed
+  RUN apk add strace
+
   RUN cd /usr/lib && ln -s libcrypto.so.3 libcrypto.so
 
   RUN addgroup -S hadoop
