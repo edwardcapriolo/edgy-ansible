@@ -32,6 +32,13 @@ rm -rf hadoop-3.4.2/share/hadoop/common/sources/hadoop-common-3.4.2-test-sources
 rm -rf hadoop-3.4.2/lib/native/*
 rm -rf hadoop-3.4.2/share/hadoop/yarn/hadoop-yarn-applications-catalog-webapp-3.4.2.war
 
+cp exception.c hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
+cp yarn-csi-pom.xml hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
+
+cd hd_src
+mvn clean
+cd ..
+
 cat << EOF > Dockerfile
 FROM ecapriolo/jre-17:0.0.1 AS hadoop-build
 RUN apk add --no-cache gzip bash maven
@@ -53,13 +60,10 @@ WORKDIR /build
 RUN cd /build
 
 #alpine patch
-COPY exception.c /build/hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
-  COPY yarn-csi-pom.xml /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
+#COPY exception.c /build/hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
+#COPY yarn-csi-pom.xml /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
 
-RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/ && mvn install -DskipTests
-#RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-project && mvn install -DskipTests
-#RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-build-tools && mvn install -DskipTests
-#RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-maven-plugins && mvn install -DskipTests
+RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/ && mvn install -DskipTests --projects '!hadoop-tools/hadoop-gcp,!hadoop-client-modules/hadoop-client-minicluster,!hadoop-tools/hadoop-datajoin,!hadoop-tools/hadoop-benchmark'
 
 RUN sed -ri 's/^(.*JniBasedUnixGroupsNetgroupMapping.c)/#\1/g' /build/hd_src/hadoop-common-project/hadoop-common/src/CMakeLists.txt
 RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-common-project/hadoop-common && mvn package -Pnative -DskipTests -Dtar
