@@ -34,6 +34,9 @@ rm -rf hadoop-3.4.2/share/hadoop/yarn/hadoop-yarn-applications-catalog-webapp-3.
 
 cp exception.c hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
 cp yarn-csi-pom.xml hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
+cp build_and_deploy.sh hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager
+cp container-executor.c hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/native/container-executor/impl
+cp main.c hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/native/container-executor/impl
 
 cd hd_src
 mvn clean
@@ -63,7 +66,7 @@ RUN cd /build
 #COPY exception.c /build/hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
 #COPY yarn-csi-pom.xml /build/hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
 
-RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/ && mvn install -DskipTests --projects '!hadoop-tools/hadoop-gcp,!hadoop-client-modules/hadoop-client-minicluster,!hadoop-tools/hadoop-datajoin,!hadoop-tools/hadoop-benchmark'
+RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/ && mvn install -DskipTests --projects '!hadoop-tools/hadoop-azure,!hadoop-tools/hadoop-aws,!hadoop-tools/hadoop-gcp,!hadoop-client-modules/hadoop-client-minicluster,!hadoop-tools/hadoop-datajoin,!hadoop-tools/hadoop-benchmark'
 
 RUN sed -ri 's/^(.*JniBasedUnixGroupsNetgroupMapping.c)/#\1/g' /build/hd_src/hadoop-common-project/hadoop-common/src/CMakeLists.txt
 RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/hadoop-common-project/hadoop-common && mvn package -Pnative -DskipTests -Dtar
@@ -93,6 +96,7 @@ FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
   RUN addgroup -S hadoop
   RUN addgroup -S hdfs && adduser -S -G hdfs -H -D hdfs
   RUN addgroup -S yarn && adduser -S -G yarn -H -D yarn
+  RUN addgroup yarn hadoop
   RUN addgroup -S auser && adduser -S -G auser -H -D auser
 
   COPY --from=hadoop-build /build/hd_src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/* /usr/local/lib
