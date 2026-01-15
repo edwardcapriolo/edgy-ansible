@@ -32,15 +32,16 @@ rm -rf hadoop-3.4.2/share/hadoop/common/sources/hadoop-common-3.4.2-test-sources
 rm -rf hadoop-3.4.2/lib/native/*
 rm -rf hadoop-3.4.2/share/hadoop/yarn/hadoop-yarn-applications-catalog-webapp-3.4.2.war
 
-cp exception.c hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
+#cp exception.c hd_src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
 cp yarn-csi-pom.xml hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-csi/pom.xml
 cp build_and_deploy.sh hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager
-cp container-executor.c hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/native/container-executor/impl
-cp main.c hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/native/container-executor/impl
+#cp container-executor.c hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/native/container-executor/impl
+#cp main.c hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/main/native/container-executor/impl
 
 cd hd_src
 mvn clean
 cd ..
+
 
 cat << EOF > Dockerfile
 FROM ecapriolo/jre-17:0.0.1 AS hadoop-build
