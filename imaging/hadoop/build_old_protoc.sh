@@ -11,7 +11,7 @@ apk --no-cache add --virtual .builddeps \
         | tar -xzf - \
     && mv googletest-* gtest \
     && ./autogen.sh \
-    && CXXFLAGS="$CXXFLAGS -fno-delete-null-pointer-checks" ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+    && CXXFLAGS="$CXXFLAGS -fno-delete-null-pointer-checks" ./configure --prefix=/opt/protoc \
     && make \
     && make install \
     && rm -rf /tmp/protobuf-*
