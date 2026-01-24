@@ -45,7 +45,7 @@ cat << EOF > Dockerfile
   WORKDIR /build
   RUN cd /build
 
-  RUN apk add --no-cache libmagic musl-dev file-dev file linux-headers
+  RUN apk add --no-cache libmagic musl-dev file-dev file linux-headers isa-l isa-l-dev
   RUN sed -ri 's/^(.*JniBasedUnixGroupsNetgroupMapping.c)/#\1/g' /build/hd_src/hadoop-common-project/hadoop-common/src/CMakeLists.txt
 
   COPY hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager hd_src/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager
@@ -65,7 +65,7 @@ FROM ecapriolo/jre-17:0.0.1 AS tiny-hadoop
 
   #https://issues.apache.org/jira/browse/HADOOP-19758
   #busybox find is not posixcompliant (does not support  -l or -s)
-  RUN apk add --no-cache bash bzip2 fts fuse libtirpc openssl snappy zlib  ncurses \
+  RUN apk add --no-cache bash bzip2 fts fuse libtirpc openssl snappy zlib ncurses isa-l isa-l-dev \
     findutils file
 
   #debug tools flag needed

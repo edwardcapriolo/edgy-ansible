@@ -42,7 +42,7 @@ cat << EOF > base-dockerfile
 
 FROM ecapriolo/jre-17:0.0.1 AS hadoop-base-build
 RUN apk add --no-cache gzip bash maven
-RUN apk add --no-cache gcompat cmake make gcc g++ openssl-dev zlib-dev snappy-dev bzip2-dev
+RUN apk add --no-cache gcompat cmake make gcc g++ openssl-dev zlib-dev snappy-dev bzip2-dev isa-l isa-l-dev
 
 RUN mkdir /build
 COPY hd_src/ /build/hd_src
@@ -52,7 +52,7 @@ ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 WORKDIR /build
 RUN cd /build
 
-RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/ && mvn install -Denforcer.skip=true -DskipTests --projects '!hadoop-tools/hadoop-azure,!hadoop-tools/hadoop-aws,!hadoop-cloud-storage-project/hadoop-gcp,!hadoop-client-modules/hadoop-client-minicluster,!hadoop-tools/hadoop-datajoin,!hadoop-tools/hadoop-benchmark'
+RUN --mount=type=cache,target=/root/.m2 cd /build/hd_src/ && mvn install -Drequire.isal -Denforcer.skip=true -DskipTests --projects '!hadoop-tools/hadoop-azure,!hadoop-tools/hadoop-aws,!hadoop-cloud-storage-project/hadoop-gcp,!hadoop-client-modules/hadoop-client-minicluster,!hadoop-tools/hadoop-datajoin,!hadoop-tools/hadoop-benchmark'
 
 EOF
 
