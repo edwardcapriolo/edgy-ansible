@@ -1,0 +1,3 @@
+docker tag jdk-25:latest ecapriolo/jdk-25:0.0.1
+docker push ecapriolo/jdk-25:0.0.1
+
