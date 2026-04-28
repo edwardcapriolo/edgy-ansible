@@ -1,0 +1,29 @@
+services:
+
+## WEBUI
+  opencode_shared_m2:
+    hostname: opencode_shared_m2
+    container_name: opencode_shared_m2
+    build:
+      args:
+        duid: "$duid"
+        dusername: "$dusername"
+    entrypoint: "/opencode/.opencode/bin/opencode"
+    command: [ "web", "--port", "4096", "--hostname", "0.0.0.0" ]
+
+    volumes:
+#     Make directories or sym links for this stuff
+      - ./opencode-config:/home/alpine/.config
+#      - ./m2:/home/alpine/.m2
+    environment:
+      A_VAR: "b"
+    ports:
+      - "4096:4096"
+
+## LOCALCONSOLE
+  opencode_console:
+    hostname: opencode_console
+    container_name: opencode_console
+    image: trusted-opencode:latest
+    entrypoint: [ "sleep", "infinity" ] 
+  
