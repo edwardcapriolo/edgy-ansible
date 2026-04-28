@@ -1,0 +1,6 @@
+services:
+  jdk25cdevel:
+    image: jdk-25-cdevel
+    hostname: jdk25cdevel
+    container_name: jdk25cdevel
+    entrypoint: [ "sleep", "infinity" ] 
