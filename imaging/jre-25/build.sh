@@ -12,13 +12,15 @@ ENTRYPOINT ["/usr/bin/java",  "-version"]
 
 FROM jdk-25 AS jdk-25-devel
 
-RUN apk add maven \
+RUN apk add --no-cache maven \
 jq \
 git \
 curl \
 bash \
 gpg \
-coreutils
+coreutils \
+findutils \
+ripgrep
 
 FROM jdk-25-devel AS jdk-25-cdevel
 
@@ -34,7 +36,6 @@ EOF
 docker build \
 --no-cache \
 -t jdk-25 .
-
 
 docker build \
 --no-cache \
