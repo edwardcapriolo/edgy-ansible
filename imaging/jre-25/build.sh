@@ -1,10 +1,11 @@
 ./inc.sh
 
 cat << EOF > Dockerfile
-FROM alpine:3.22.2 AS jdk-25
+FROM alpine:3.23.4 AS jdk-25
 RUN cp /etc/apk/repositories /tmp/repositories
 COPY repos /etc/apk/repositories
 
+RUN apk update --no-cache && apk upgrade --no-cache 
 RUN apk add --no-cache openjdk25
 
 RUN cp /tmp/repositories /etc/apk/repositories
@@ -35,13 +36,16 @@ EOF
 
 docker build \
 --no-cache \
+--target jdk-25 \
 -t jdk-25 .
 
 docker build \
 --no-cache \
+--target jdk-25-devel \
 -t jdk-25-devel .
 
 docker build \
 --no-cache \
+--target jdk-25-cdevel \
 -t jdk-25-cdevel .
     
