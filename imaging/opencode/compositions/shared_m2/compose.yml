@@ -8,7 +8,7 @@ services:
       args:
         duid: "$duid"
         dusername: "$dusername"
-    entrypoint: "/opencode/.opencode/bin/opencode"
+    entrypoint: "/opencode/go/bin/opencode"
     command: [ "web", "--port", "4096", "--hostname", "0.0.0.0" ]
 
     volumes:
