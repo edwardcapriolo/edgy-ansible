@@ -11,6 +11,10 @@ RUN apk add --no-cache openjdk25
 RUN cp /tmp/repositories /etc/apk/repositories
 ENTRYPOINT ["/usr/bin/java",  "-version"]
 
+FROM jdk-25 AS jdk-25-gcompat
+
+  RUN apk add --no-cache gcompat libstdc++
+
 FROM jdk-25 AS jdk-25-devel
 
 RUN apk add --no-cache maven \
@@ -38,6 +42,11 @@ docker build \
 --no-cache \
 --target jdk-25 \
 -t jdk-25 .
+
+docker build \
+--no-cache \
+--target jdk-25-gcompat \
+-t jdk-25-gcompat . 
 
 docker build \
 --no-cache \

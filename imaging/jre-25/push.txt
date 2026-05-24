@@ -1,8 +1,11 @@
-docker tag jdk-25:latest ecapriolo/jdk-25:0.0.3
-docker push ecapriolo/jdk-25:0.0.3
+docker tag jdk-25:latest ecapriolo/jdk-25:0.0.4
+docker push ecapriolo/jdk-25:0.0.4
 
-docker tag jdk-25-devel:latest ecapriolo/jdk-25-devel:0.0.3
-docker push ecapriolo/jdk-25-devel:0.0.3
+docker tag jdk-25-gcompat:latest ecpriolo/jdk-25-gcompat:0.0.4
+docker push ecapriolo/jdk-25-gcompat:0.0.4
 
-docker tag jdk-25-cdevel:latest ecapriolo/jdk-25-cdevel:0.0.3
-docker push ecapriolo/jdk-25-cdevel:0.0.3
+docker tag jdk-25-devel:latest ecapriolo/jdk-25-devel:0.0.4
+docker push ecapriolo/jdk-25-devel:0.0.4
+
+docker tag jdk-25-cdevel:latest ecapriolo/jdk-25-cdevel:0.0.4
+docker push ecapriolo/jdk-25-cdevel:0.0.4
