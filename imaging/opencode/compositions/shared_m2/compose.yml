@@ -21,9 +21,9 @@ services:
       - "4096:4096"
 
 ## LOCALCONSOLE
-  opencode_console:
-    hostname: opencode_console
-    container_name: opencode_console
-    image: trusted-opencode:latest
-    entrypoint: [ "sleep", "infinity" ] 
+#  opencode_console:
+#    hostname: opencode_console
+#    container_name: opencode_console
+#    image: trusted-opencode-devel:latest
+#    entrypoint: [ "sleep", "infinity" ] 
   
