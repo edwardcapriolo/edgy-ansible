@@ -38,23 +38,30 @@ make
 
 EOF
 
-docker build \
+docker buildx build \
+--platform linux/amd64,linux/arm64 \
 --no-cache \
 --target jdk-25 \
--t jdk-25 .
+-t jdk-25 --load .
 
-docker build \
+docker buildx build \
+--platform linux/amd64,linux/arm64 \
 --no-cache \
 --target jdk-25-gcompat \
--t jdk-25-gcompat . 
+-t jdk-25-gcompat --load .
 
-docker build \
---no-cache \
---target jdk-25-devel \
--t jdk-25-devel .
+#docker build \
+#--no-cache \
+#--target jdk-25-gcompat \
+#-t jdk-25-gcompat . 
 
-docker build \
---no-cache \
---target jdk-25-cdevel \
--t jdk-25-cdevel .
+#docker build \
+#--no-cache \
+#--target jdk-25-devel \
+#-t jdk-25-devel .
+
+#docker build \
+#--no-cache \
+#--target jdk-25-cdevel \
+#-t jdk-25-cdevel .
     
