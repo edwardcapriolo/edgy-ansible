@@ -1,1 +1,1 @@
-docker run -it --entrypoint /bin/ash trusted-opencode-minimal:latest 
+docker run -it --entrypoint /bin/ash ecapriolo/trusted-opencode:latest-minimal-arm64

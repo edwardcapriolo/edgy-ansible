@@ -1,4 +1,14 @@
-./inc.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+ARM_CONTEXT="${ARM_CONTEXT:-colima}"
+AMD_CONTEXT="${AMD_CONTEXT:-colima-x86}"
+NO_CACHE="${NO_CACHE:-false}"
+TARGETS=("jdk-25:" "jdk-25-gcompat:-gcompat" "jdk-25-devel:-devel" "jdk-25-cdevel:-cdevel")
+
+if [ -f ./inc.sh ]; then
+  . ./inc.sh
+fi
 
 cat << EOF > Dockerfile
 FROM alpine:3.23.4 AS jdk-25
@@ -38,30 +48,40 @@ make
 
 EOF
 
-docker buildx build \
---platform linux/amd64,linux/arm64 \
---no-cache \
---target jdk-25 \
--t jdk-25 --load .
+build_one() {
+  local target="$1"
+  local variant="$2"
+  local platform="$3"
+  local context="$4"
+  local suffix="$5"
+  local cmd=(
+    docker --context "$context" buildx build
+    --platform "$platform"
+    --target "$target"
+    -t "$IMAGE_REPO:$VERSION$variant-$suffix"
+    -t "$IMAGE_REPO:latest$variant-$suffix"
+    --load
+    .
+  )
 
-docker buildx build \
---platform linux/amd64,linux/arm64 \
---no-cache \
---target jdk-25-gcompat \
--t jdk-25-gcompat --load .
+  if [ "$NO_CACHE" = "true" ]; then
+    cmd=(
+      docker --context "$context" buildx build
+      --platform "$platform"
+      --no-cache
+      --target "$target"
+      -t "$IMAGE_REPO:$VERSION$variant-$suffix"
+      -t "$IMAGE_REPO:latest$variant-$suffix"
+      --load
+      .
+    )
+  fi
 
-#docker build \
-#--no-cache \
-#--target jdk-25-gcompat \
-#-t jdk-25-gcompat . 
+  "${cmd[@]}"
+}
 
-#docker build \
-#--no-cache \
-#--target jdk-25-devel \
-#-t jdk-25-devel .
-
-#docker build \
-#--no-cache \
-#--target jdk-25-cdevel \
-#-t jdk-25-cdevel .
-    
+for entry in "${TARGETS[@]}"; do
+  IFS=":" read -r target variant <<< "$entry"
+  build_one "$target" "$variant" linux/arm64 "$ARM_CONTEXT" arm64
+  build_one "$target" "$variant" linux/amd64 "$AMD_CONTEXT" amd64
+done
