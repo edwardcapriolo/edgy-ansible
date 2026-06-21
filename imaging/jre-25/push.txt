@@ -1,11 +1,17 @@
-docker tag jdk-25:latest ecapriolo/jdk-25:0.0.4
-docker push ecapriolo/jdk-25:0.0.4
+./push.sh
 
-docker tag jdk-25-gcompat:latest ecpriolo/jdk-25-gcompat:0.0.4
-docker push ecapriolo/jdk-25-gcompat:0.0.4
-
-docker tag jdk-25-devel:latest ecapriolo/jdk-25-devel:0.0.4
-docker push ecapriolo/jdk-25-devel:0.0.4
-
-docker tag jdk-25-cdevel:latest ecapriolo/jdk-25-cdevel:0.0.4
-docker push ecapriolo/jdk-25-cdevel:0.0.4
+# Arch tags pushed from local builds:
+# ecapriolo/jdk-25:0.0.5-arm64
+# ecapriolo/jdk-25:0.0.5-amd64
+# ecapriolo/jdk-25:latest-arm64
+# ecapriolo/jdk-25:latest-amd64
+#
+# Manifest tags published to one repository from inc.sh:
+# ecapriolo/jdk-25:0.0.5
+# ecapriolo/jdk-25:latest
+# ecapriolo/jdk-25:0.0.5-gcompat
+# ecapriolo/jdk-25:latest-gcompat
+# ecapriolo/jdk-25:0.0.5-devel
+# ecapriolo/jdk-25:latest-devel
+# ecapriolo/jdk-25:0.0.5-cdevel
+# ecapriolo/jdk-25:latest-cdevel
