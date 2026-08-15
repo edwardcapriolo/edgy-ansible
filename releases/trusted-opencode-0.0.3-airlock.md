@@ -2,11 +2,13 @@
 
 ![Trusted-Opencode Airlock](assets/trusted-opencode-airlock.svg)
 
-Trusted-Opencode `0.0.3`, codenamed **Airlock**, is about making opencode a practical isolated build room. It is a container runtime for doing real Java, C/C++, container, and cloud operations work without handing the session the host Docker socket.
+Trusted-Opencode `0.0.3`, codenamed **Airlock**, is about making opencode a practical isolated build room. It is a container runtime for doing real Java, C/C++, container, and cloud operations work while keeping a barrier, an airlock, between the agent and the host.
 
 ## Why Airlock?
 
-An airlock is a controlled boundary. This release keeps that idea: opencode runs inside a container, and when it needs test containers it starts its own rootless Docker daemon inside that boundary instead of escaping to the host daemon.
+An airlock is a controlled boundary. Agents running directly as your user inherently reach the things your user can reach: source trees, environment files, documents, sockets, caches, and credentials. Running the agent in a container does not make magic security claims, but it does make the boundary explicit. You choose the bind mounts, devices, ports, and environment variables that cross into the workspace.
+
+This release keeps that idea even when the agent needs containers. Instead of mounting the host Docker socket, opencode starts its own rootless Docker daemon inside the container boundary. The agent can build and test with containers, while the host daemon stays outside the airlock.
 
 ## What Changed
 
