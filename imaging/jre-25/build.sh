@@ -26,7 +26,7 @@ ENTRYPOINT ["/usr/bin/java",  "-version"]
 
 FROM jdk-25 AS jdk-25-gcompat
 
-  RUN apk add --no-cache gcompat libstdc++
+  RUN apk add --no-cache gcompat libc6-compat libstdc++
 
 FROM jdk-25 AS jdk-25-devel
 

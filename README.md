@@ -17,6 +17,7 @@ Things Edgy is about:
 - [arizona-keeper](roles/arizona-keeper/README.md) a zookeeper role with TLS security
 - [arizona-storage-compute](roles/arizona-storage-compute/README.md) HDFS and YARN HA no Single Point Of Failure
 - [edgy-kafka](roles/edgy-kafka/README.md) a kafka installation that ONLY supports SSL
+- [trusted-opencode 0.0.3 Airlock](releases/trusted-opencode-0.0.3-airlock.md) containerized Java, cdevel, Docker-in-container, and cloud ops workspace
 
 ## Why not Ansible galaxy?
 

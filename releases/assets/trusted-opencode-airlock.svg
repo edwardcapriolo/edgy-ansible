@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Trusted-Opencode 0.0.3 Airlock</title>
+  <desc id="desc">A stylized airlock containing nested container blocks and cloud operations symbols.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08111f"/>
+      <stop offset="0.55" stop-color="#10263a"/>
+      <stop offset="1" stop-color="#071017"/>
+    </linearGradient>
+    <linearGradient id="door" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#39d2ff"/>
+      <stop offset="1" stop-color="#62ffb5"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="970" cy="110" r="190" fill="#173954" opacity="0.35"/>
+  <circle cx="220" cy="540" r="240" fill="#0d493f" opacity="0.28"/>
+
+  <g transform="translate(118 86)">
+    <rect x="0" y="0" width="420" height="458" rx="42" fill="#0b1524" stroke="#2b5b75" stroke-width="8"/>
+    <rect x="46" y="42" width="328" height="374" rx="165" fill="none" stroke="url(#door)" stroke-width="16" filter="url(#glow)"/>
+    <rect x="128" y="130" width="164" height="210" rx="22" fill="#102d3d" stroke="#8df7ff" stroke-width="5"/>
+    <rect x="154" y="164" width="112" height="60" rx="10" fill="#183f54" stroke="#62ffb5" stroke-width="4"/>
+    <rect x="154" y="242" width="112" height="60" rx="10" fill="#183f54" stroke="#62ffb5" stroke-width="4"/>
+    <circle cx="330" cy="235" r="18" fill="#62ffb5"/>
+    <path d="M72 235h78M270 235h42" stroke="#8df7ff" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(610 116)">
+    <text x="0" y="0" fill="#dffcff" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">Trusted-Opencode</text>
+    <text x="0" y="68" fill="#62ffb5" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800">Airlock</text>
+    <text x="0" y="116" fill="#9ec7d4" font-family="Arial, Helvetica, sans-serif" font-size="28">0.0.3 release</text>
+
+    <g transform="translate(0 172)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="0" y="0" width="108" height="72" rx="14" fill="#102d3d" stroke="#39d2ff" stroke-width="4"/>
+      <rect x="28" y="-26" width="108" height="72" rx="14" fill="#102d3d" stroke="#62ffb5" stroke-width="4"/>
+      <path d="M174 22h96M222 -26v96" stroke="#8df7ff" stroke-width="8"/>
+      <path d="M326 18c16-34 66-34 82 0 34 0 50 44 22 66H316c-30-20-20-66 10-66z" fill="#102d3d" stroke="#62ffb5" stroke-width="4"/>
+    </g>
+
+    <text x="0" y="338" fill="#dffcff" font-family="Arial, Helvetica, sans-serif" font-size="26">Java 25 + Java 17</text>
+    <text x="0" y="380" fill="#dffcff" font-family="Arial, Helvetica, sans-serif" font-size="26">C/C++ development</text>
+    <text x="0" y="422" fill="#dffcff" font-family="Arial, Helvetica, sans-serif" font-size="26">Rootless Docker-in-container</text>
+  </g>
+
+  <rect x="42" y="42" width="1116" height="546" rx="34" fill="none" stroke="#24485c" stroke-width="3" opacity="0.8"/>
+</svg>

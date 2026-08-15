@@ -1,2 +1,2 @@
-VERSION="${VERSION:-0.0.5}"
+VERSION="${VERSION:-0.0.6}"
 IMAGE_REPO="${IMAGE_REPO:-ecapriolo/jdk-25}"

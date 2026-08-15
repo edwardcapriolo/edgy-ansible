@@ -22,11 +22,9 @@ push_manifest() {
   local variant="$1"
   local tag="$2"
 
-  docker manifest rm "$IMAGE_REPO:$tag$variant" >/dev/null 2>&1 || true
-  docker manifest create "$IMAGE_REPO:$tag$variant" \
+  docker buildx imagetools create -t "$IMAGE_REPO:$tag$variant" \
     "$IMAGE_REPO:$tag$variant-amd64" \
     "$IMAGE_REPO:$tag$variant-arm64"
-  docker manifest push "$IMAGE_REPO:$tag$variant"
 }
 
 for entry in "${TARGETS[@]}"; do
