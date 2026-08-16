@@ -3,7 +3,7 @@ set -euo pipefail
 
 ARM_CONTEXT="${ARM_CONTEXT:-colima}"
 AMD_CONTEXT="${AMD_CONTEXT:-colima-x86}"
-TARGETS=("trusted-opencode-cdevel:-cdevel" "trusted-opencode-devel:-devel" "trusted-opencode-minimal:-minimal")
+TARGETS=("trusted-opencode-cdevel:-cdevel" "trusted-opencode-devel:-devel" "trusted-opencode-minimal:-minimal" "trusted-opencode-cloudops:-cloudops")
 
 if [ -f ./inc.sh ]; then
   . ./inc.sh

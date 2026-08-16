@@ -81,17 +81,24 @@ Run the published image directly when you want the standard container user and a
 
 ```sh
 cd imaging/opencode
-IMAGE_VARIANT=-cdevel sh enter_container.sh
+IMAGE_VARIANT=-cloudops sh enter_container.sh
 ```
 
-Use the bindmount workspace when you want files created by opencode to match your host UID and primary GID:
+Inside the container, start rootless Docker when you need container tests:
+
+```sh
+start-rootless-docker bash
+docker run --rm hello-world
+```
+
+Use the bindmount workspace when you want the web UI, host UID/GID matching, Maven/config bind mounts, and the full `cloudops` toolset:
 
 ```sh
 cd imaging/opencode/compositions/bindmount-workspace
 cp .env.example .env
 ```
 
-Edit `.env` for your machine:
+Edit `.env` for your machine. Use `id -u`, `id -g`, and `whoami` to find the values:
 
 ```text
 duid=502
@@ -115,4 +122,4 @@ Here's how we developed Airlock while peer coding with the previous version:
 
 ![opencode UI while developing Airlock](assets/opencode.png)
 
-The compose build creates a small derived image just for your host user, then starts opencode with your bind mounts and rootless Docker runtime settings.
+The compose build creates a small derived image from `trusted-opencode:0.0.3-cloudops` just for your host user, then starts opencode with your bind mounts and rootless Docker runtime settings.

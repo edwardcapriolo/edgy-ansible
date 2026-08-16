@@ -1,14 +1,14 @@
 services:
-  opencode_bindmount_workspace:
-    hostname: opencode_bindmount_workspace
-    container_name: opencode_bindmount_workspace
+  opencode-bindmount-workspace:
+    hostname: opencode-bindmount-workspace
+    container_name: opencode-bindmount-workspace
     build:
       context: .
       dockerfile: Dockerfile
       platforms:
         - ${PLATFORM:-linux/arm64}
       args:
-        BASE_IMAGE: ${BASE_IMAGE:-ecapriolo/trusted-opencode:0.0.3-cdevel}
+        BASE_IMAGE: ${BASE_IMAGE:-ecapriolo/trusted-opencode:0.0.3-cloudops}
         duid: ${duid}
         dgid: ${dgid}
         dusername: ${dusername}
