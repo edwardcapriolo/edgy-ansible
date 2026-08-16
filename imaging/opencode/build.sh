@@ -7,7 +7,7 @@ ARM_COLIMA_PROFILE="${ARM_COLIMA_PROFILE:-default}"
 AMD_COLIMA_PROFILE="${AMD_COLIMA_PROFILE:-x86}"
 CHECK_COLIMA_PROFILES="${CHECK_COLIMA_PROFILES:-true}"
 NO_CACHE="${NO_CACHE:-false}"
-TARGETS=("trusted-opencode-cdevel:-cdevel" "trusted-opencode-devel:-devel" "trusted-opencode-minimal:-minimal")
+TARGETS=("trusted-opencode-cdevel:-cdevel" "trusted-opencode-devel:-devel" "trusted-opencode-minimal:-minimal" "trusted-opencode-cloudops:-cloudops")
 
 if [ -f ./inc.sh ]; then
   . ./inc.sh
@@ -36,8 +36,8 @@ ARG TARGETARCH
   RUN bun install
   RUN ./packages/opencode/script/build.ts --single
   RUN case "\$TARGETARCH" in \
-        amd64) cp packages/opencode/dist/opencode-linux-x64/bin/opencode /tmp/opencode ;; \
-        arm64) cp packages/opencode/dist/opencode-linux-arm64/bin/opencode /tmp/opencode ;; \
+        amd64) cp packages/opencode/dist/opencode-linux-x64/bin/opencode /tmp/opencode-bin ;; \
+        arm64) cp packages/opencode/dist/opencode-linux-arm64/bin/opencode /tmp/opencode-bin ;; \
         *) echo "unsupported TARGETARCH=\$TARGETARCH" >&2; exit 1 ;; \
       esac
 
@@ -63,10 +63,22 @@ FROM ${JDK_IMAGE_REPO}:\$JDK_CDEVEL_TAG AS trusted-opencode-cdevel
    && adduser -S -G acoder -h /home/acoder -D acoder \
    && echo 'acoder:100000:65536' >> /etc/subuid \
    && echo 'acoder:100000:65536' >> /etc/subgid
-  COPY --from=trusted-opencode-build /tmp/opencode /usr/local/bin/opencode
+  RUN rm -rf /usr/local/bin/opencode
+  COPY --from=trusted-opencode-build /tmp/opencode-bin /usr/local/bin/opencode
+  RUN chmod 755 /usr/local/bin/opencode
   COPY start-rootless-docker /usr/local/bin/start-rootless-docker
   RUN chmod 755 /usr/local/bin/start-rootless-docker
   WORKDIR /home/acoder                                                    
+  USER acoder
+
+FROM trusted-opencode-cdevel AS trusted-opencode-cloudops
+  USER root
+  RUN apk add --no-cache \
+        opentofu \
+        helm \
+        kubectl \
+        kind \
+   && ln -s /usr/bin/tofu /usr/local/bin/terraform
   USER acoder
 
 FROM ${JDK_IMAGE_REPO}:\$JDK_DEVEL_TAG AS trusted-opencode-devel
@@ -86,7 +98,9 @@ FROM ${JDK_IMAGE_REPO}:\$JDK_DEVEL_TAG AS trusted-opencode-devel
    && adduser -S -G acoder -h /home/acoder -D acoder \
    && echo 'acoder:100000:65536' >> /etc/subuid \
    && echo 'acoder:100000:65536' >> /etc/subgid
-  COPY --from=trusted-opencode-build /tmp/opencode /usr/local/bin/opencode
+  RUN rm -rf /usr/local/bin/opencode
+  COPY --from=trusted-opencode-build /tmp/opencode-bin /usr/local/bin/opencode
+  RUN chmod 755 /usr/local/bin/opencode
   COPY start-rootless-docker /usr/local/bin/start-rootless-docker
   RUN chmod 755 /usr/local/bin/start-rootless-docker
   WORKDIR /home/acoder                                                                                                     
@@ -95,7 +109,9 @@ FROM ${JDK_IMAGE_REPO}:\$JDK_DEVEL_TAG AS trusted-opencode-devel
 FROM alpine:3.23.4 AS trusted-opencode-minimal
   RUN apk add --no-cache libstdc++
   RUN addgroup -S acoder && adduser -S -G acoder -h /home/acoder -D acoder                                                 
-  COPY --from=trusted-opencode-build /tmp/opencode /usr/local/bin/opencode
+  RUN rm -rf /usr/local/bin/opencode
+  COPY --from=trusted-opencode-build /tmp/opencode-bin /usr/local/bin/opencode
+  RUN chmod 755 /usr/local/bin/opencode
   WORKDIR /home/acoder                                                                                                     
   USER acoder    
 

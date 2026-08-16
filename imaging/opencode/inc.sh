@@ -1,4 +1,4 @@
-VERSION="${VERSION:-0.0.2}"
+VERSION="${VERSION:-0.0.3}"
 IMAGE_REPO="${IMAGE_REPO:-ecapriolo/trusted-opencode}"
 JDK_IMAGE_REPO="${JDK_IMAGE_REPO:-ecapriolo/jdk-25}"
 JDK_VERSION="${JDK_VERSION:-0.0.6}"

@@ -1,5 +1,7 @@
 roles/edgy-simple-ca/files
 .DS_Store
+imaging/opencode/compositions/bindmount-workspace/.env
+imaging/opencode/compositions/bindmount-workspace/opencode-config/
 .idea
 edgy-ansible.iml
 
