@@ -1,0 +1,49 @@
+#!/bin/sh
+set -eu
+
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/user-$(id -u)}"
+export DOCKER_HOST="${DOCKER_HOST:-unix://$XDG_RUNTIME_DIR/docker.sock}"
+DOCKERD_LOG="${DOCKERD_LOG:-$XDG_RUNTIME_DIR/dockerd.log}"
+
+mkdir -p "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR"
+
+if [ ! -e /dev/net/tun ]; then
+  printf '%s\n' "warning: /dev/net/tun is missing; run the outer container with --device /dev/net/tun" >&2
+fi
+
+if ! docker info >/dev/null 2>&1; then
+  if command -v dockerd-rootless.sh >/dev/null 2>&1; then
+    DOCKERD_ROOTLESS="dockerd-rootless.sh"
+  elif command -v dockerd-rootless >/dev/null 2>&1; then
+    DOCKERD_ROOTLESS="dockerd-rootless"
+  else
+    printf '%s\n' "neither dockerd-rootless.sh nor dockerd-rootless was found on PATH" >&2
+    exit 1
+  fi
+
+  printf '%s\n' "starting rootless Docker at $DOCKER_HOST"
+  "$DOCKERD_ROOTLESS" --experimental --storage-driver=fuse-overlayfs > "$DOCKERD_LOG" 2>&1 &
+
+  i=0
+  while ! docker info >/dev/null 2>&1; do
+    i=$((i + 1))
+    if [ "$i" -eq 5 ] || [ "$i" -eq 15 ] || [ "$i" -eq 30 ]; then
+      printf '%s\n' "still waiting for rootless Docker after ${i}s"
+    fi
+    if [ "$i" -ge 60 ]; then
+      printf '%s\n' "rootless Docker did not become ready; log follows:" >&2
+      if [ -f "$DOCKERD_LOG" ]; then
+        sed -n '1,200p' "$DOCKERD_LOG" >&2
+      fi
+      exit 1
+    fi
+    sleep 1
+  done
+fi
+
+if [ "$#" -eq 0 ]; then
+  exec /bin/sh
+fi
+
+exec "$@"

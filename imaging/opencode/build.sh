@@ -3,6 +3,9 @@ set -euo pipefail
 
 ARM_CONTEXT="${ARM_CONTEXT:-colima}"
 AMD_CONTEXT="${AMD_CONTEXT:-colima-x86}"
+ARM_COLIMA_PROFILE="${ARM_COLIMA_PROFILE:-default}"
+AMD_COLIMA_PROFILE="${AMD_COLIMA_PROFILE:-x86}"
+CHECK_COLIMA_PROFILES="${CHECK_COLIMA_PROFILES:-true}"
 NO_CACHE="${NO_CACHE:-false}"
 TARGETS=("trusted-opencode-cdevel:-cdevel" "trusted-opencode-devel:-devel" "trusted-opencode-minimal:-minimal")
 
@@ -44,15 +47,48 @@ ARG TARGETARCH
   USER acoder
 
 FROM ${JDK_IMAGE_REPO}:\$JDK_CDEVEL_TAG AS trusted-opencode-cdevel
-  RUN addgroup -S acoder && adduser -S -G acoder -h /home/acoder -D acoder
+  RUN apk add --no-cache \
+        libstdc++ \
+        docker \
+        docker-cli \
+        docker-cli-buildx \
+        docker-rootless-extras \
+        fuse-overlayfs \
+        slirp4netns \
+        shadow \
+        shadow-subids \
+        iptables \
+        iproute2 \
+   && addgroup -S acoder \
+   && adduser -S -G acoder -h /home/acoder -D acoder \
+   && echo 'acoder:100000:65536' >> /etc/subuid \
+   && echo 'acoder:100000:65536' >> /etc/subgid
   COPY --from=trusted-opencode-build /tmp/opencode /usr/local/bin/opencode
+  COPY start-rootless-docker /usr/local/bin/start-rootless-docker
+  RUN chmod 755 /usr/local/bin/start-rootless-docker
   WORKDIR /home/acoder                                                    
   USER acoder
 
 FROM ${JDK_IMAGE_REPO}:\$JDK_DEVEL_TAG AS trusted-opencode-devel
-  RUN apk add --no-cache libstdc++
-  RUN addgroup -S acoder && adduser -S -G acoder -h /home/acoder -D acoder
+  RUN apk add --no-cache \
+        libstdc++ \
+        docker \
+        docker-cli \
+        docker-cli-buildx \
+        docker-rootless-extras \
+        fuse-overlayfs \
+        slirp4netns \
+        shadow \
+        shadow-subids \
+        iptables \
+        iproute2 \
+   && addgroup -S acoder \
+   && adduser -S -G acoder -h /home/acoder -D acoder \
+   && echo 'acoder:100000:65536' >> /etc/subuid \
+   && echo 'acoder:100000:65536' >> /etc/subgid
   COPY --from=trusted-opencode-build /tmp/opencode /usr/local/bin/opencode
+  COPY start-rootless-docker /usr/local/bin/start-rootless-docker
+  RUN chmod 755 /usr/local/bin/start-rootless-docker
   WORKDIR /home/acoder                                                                                                     
   USER acoder       
 
@@ -100,6 +136,54 @@ build_one() {
 
   "${cmd[@]}"
 }
+
+check_colima_profile() {
+  local profile="$1"
+  local arch="$2"
+
+  if [ "$CHECK_COLIMA_PROFILES" != "true" ]; then
+    return 0
+  fi
+
+  if ! command -v colima >/dev/null 2>&1; then
+    echo "colima is not installed or not on PATH; set CHECK_COLIMA_PROFILES=false to skip this check" >&2
+    exit 1
+  fi
+
+  local status
+  if ! status="$(colima list 2>/dev/null | awk -v profile="$profile" 'NR > 1 && $1 == profile { print $2; found=1 } END { if (!found) exit 1 }')"; then
+    echo "Colima profile '$profile' for $arch was not found" >&2
+    echo "Set ${arch}_COLIMA_PROFILE to the correct profile name, or create it with: colima start --profile $profile" >&2
+    exit 1
+  fi
+
+  if [ "$status" != "Running" ]; then
+    echo "Colima profile '$profile' for $arch is $status; start it with: colima start --profile $profile" >&2
+    exit 1
+  fi
+}
+
+check_docker_context() {
+  local context="$1"
+  local arch="$2"
+
+  if ! docker --context "$context" info >/dev/null 2>&1; then
+    echo "Docker context '$context' for $arch is not reachable" >&2
+    echo "Set ${arch}_CONTEXT to the correct Docker context name" >&2
+    exit 1
+  fi
+
+  if ! docker --context "$context" buildx inspect >/dev/null 2>&1; then
+    echo "Docker context '$context' for $arch is not usable with buildx" >&2
+    echo "Check builders with: docker --context $context buildx ls" >&2
+    exit 1
+  fi
+}
+
+check_colima_profile "$ARM_COLIMA_PROFILE" ARM
+check_colima_profile "$AMD_COLIMA_PROFILE" AMD
+check_docker_context "$ARM_CONTEXT" ARM
+check_docker_context "$AMD_CONTEXT" AMD
 
 for entry in "${TARGETS[@]}"; do
   IFS=":" read -r target variant <<< "$entry"
