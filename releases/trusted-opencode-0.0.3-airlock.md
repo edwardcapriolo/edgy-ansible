@@ -10,6 +10,25 @@ An airlock is a controlled boundary. Agents running directly as your user inhere
 
 This release keeps that idea even when the agent needs containers. Instead of mounting the host Docker socket, opencode starts its own rootless Docker daemon inside the container boundary. The agent can build and test with containers, while the host daemon stays outside the airlock.
 
+## Where To Get It
+
+The images are published on Docker Hub:
+
+- [`ecapriolo/trusted-opencode`](https://hub.docker.com/r/ecapriolo/trusted-opencode)
+- [`ecapriolo/jdk-25`](https://hub.docker.com/r/ecapriolo/jdk-25)
+
+Pull the full Airlock workspace:
+
+```sh
+docker pull ecapriolo/trusted-opencode:0.0.3-cloudops
+```
+
+Clone this repo for the compose files and build scripts:
+
+```sh
+git clone git@github.com:edwardcapriolo/edgy-ansible.git
+```
+
 ## What Changed
 
 - Builds opencode from `v1.18.15`.
