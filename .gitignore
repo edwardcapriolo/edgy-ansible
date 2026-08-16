@@ -1,4 +1,5 @@
 roles/edgy-simple-ca/files
+.DS_Store
 .idea
 edgy-ansible.iml
 

@@ -1,0 +1,40 @@
+services:
+  opencode_bindmount_workspace:
+    hostname: opencode_bindmount_workspace
+    container_name: opencode_bindmount_workspace
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - ${PLATFORM:-linux/arm64}
+      args:
+        BASE_IMAGE: ${BASE_IMAGE:-ecapriolo/trusted-opencode:0.0.3-cdevel}
+        duid: ${duid}
+        dgid: ${dgid}
+        dusername: ${dusername}
+    entrypoint: "/usr/local/bin/opencode"
+    command: [ "web", "--port", "4096", "--hostname", "0.0.0.0", "--log-level", "DEBUG" ]
+    devices:
+      - /dev/fuse:/dev/fuse
+      - /dev/net/tun:/dev/net/tun
+    security_opt:
+      - seccomp=unconfined
+      - apparmor=unconfined
+      - systempaths=unconfined
+    sysctls:
+      net.ipv4.ip_forward: "1"
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - ./opencode-config:/home/${dusername}/.config
+      - ./m2:/home/${dusername}/.m2
+      - ./ai-code:/ai-code
+      - ./ai-code:/bi-code
+      - ./.deliverance:/home/${dusername}/.deliverance
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      TESTCONTAINERS_RYUK_DISABLED: "true"
+    user: "${duid}:${dgid}"
+    ports:
+      - "4097:4096"
