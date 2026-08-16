@@ -15,16 +15,25 @@ services:
     entrypoint: "/usr/local/bin/opencode"
     command: [ "web", "--port", "4096", "--hostname", "0.0.0.0", "--log-level", "DEBUG" ]
     devices:
+      # Needed by fuse-overlayfs for rootless Docker image storage.
       - /dev/fuse:/dev/fuse
+      # Needed by RootlessKit/slirp4netns for nested container networking.
       - /dev/net/tun:/dev/net/tun
     security_opt:
+      # Allows namespace, mount, and networking syscalls used by rootless Docker.
       - seccomp=unconfined
+      # Avoids AppArmor blocking nested runtime setup on Linux hosts.
       - apparmor=unconfined
+      # Allows dockerd-rootless to update required /proc/sys networking state.
       - systempaths=unconfined
     sysctls:
+      # Required by dockerd-rootless/rootlesskit networking. For stricter egress,
+      # attach this service to a controlled Docker network or force registry/proxy use.
       net.ipv4.ip_forward: "1"
     tmpfs:
+      # Writable runtime state for sockets and nested daemon files.
       - /run
+      # Writable temporary space for RootlessKit and Docker startup.
       - /tmp
     volumes:
       - ./opencode-config:/home/${dusername}/.config

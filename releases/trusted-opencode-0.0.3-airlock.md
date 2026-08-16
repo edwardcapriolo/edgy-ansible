@@ -60,7 +60,7 @@ fuse-overlayfs
 
 ## Boundary
 
-Airlock still requires the outer container runtime to provide a few kernel interfaces:
+Airlock requires the outer container runtime to provide a few kernel interfaces when you want Docker-in-Docker support:
 
 ```text
 /dev/fuse
@@ -69,7 +69,7 @@ systempaths=unconfined
 net.ipv4.ip_forward=1
 ```
 
-Those permissions enable rootless storage and networking for the nested daemon. They do not mount the host Docker socket.
+Those permissions enable rootless storage and networking for the nested daemon. They are not required when you only want the opencode workspace, Java tools, C/C++ tools, or cloud CLIs. They do not mount the host Docker socket.
 
 ## Goal
 
@@ -123,3 +123,36 @@ Here's how we developed Airlock while peer coding with the previous version:
 ![opencode UI while developing Airlock](assets/opencode.png)
 
 The compose build creates a small derived image from `trusted-opencode:0.0.3-cloudops` just for your host user, then starts opencode with your bind mounts and rootless Docker runtime settings.
+
+## Network Egress
+
+The compose workspace enables `net.ipv4.ip_forward=1` because rootless Docker uses RootlessKit/slirp4netns networking. Without it, the nested daemon may start but containers can fail to reach registries or the outside network.
+
+That setting is not meant to be an egress policy. If you need tighter control, put the outer opencode container on a controlled Docker network, use an HTTP proxy, or point Docker at an internal registry/mirror. In an airgapped environment, pre-load the images or use a private registry inside the allowed network boundary instead of relying on Docker Hub.
+
+## Recipes
+
+Share Maven dependencies with the host:
+
+```yaml
+- ./m2:/home/${dusername}/.m2
+```
+
+This keeps the image smaller and avoids downloading the same Maven artifacts repeatedly. The tradeoff is that the host and container share a writable dependency cache, so bad files or permission mistakes can affect both sides.
+
+Share large local model assets:
+
+```yaml
+- ./.deliverance:/home/${dusername}/.deliverance
+```
+
+Large language model assets are too expensive to duplicate into every image or workspace. Bind mounting them keeps the image practical and lets multiple containers reuse the same local model directory.
+
+Share project workspaces:
+
+```yaml
+- ./ai-code:/ai-code
+- ./ai-code:/bi-code
+```
+
+Mounting source trees keeps edits visible to both the host editor and the opencode agent. Matching the container UID/GID to the host user keeps generated files, build outputs, and cleanup manageable.
