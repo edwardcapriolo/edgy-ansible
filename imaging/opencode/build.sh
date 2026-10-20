@@ -7,7 +7,7 @@ ARM_COLIMA_PROFILE="${ARM_COLIMA_PROFILE:-default}"
 AMD_COLIMA_PROFILE="${AMD_COLIMA_PROFILE:-x86}"
 CHECK_COLIMA_PROFILES="${CHECK_COLIMA_PROFILES:-true}"
 NO_CACHE="${NO_CACHE:-false}"
-TARGETS=("trusted-opencode-cdevel:-cdevel" "trusted-opencode-devel:-devel" "trusted-opencode-minimal:-minimal" "trusted-opencode-cloudops:-cloudops")
+TARGETS=("trusted-opencode-cdevel:-cdevel" "trusted-opencode-devel:-devel" "trusted-opencode-minimal:-minimal" "trusted-opencode-cloudops:-cloudops" "trusted-opencode-browser:-browser")
 
 if [ -f ./inc.sh ]; then
   . ./inc.sh
@@ -79,7 +79,24 @@ FROM trusted-opencode-cdevel AS trusted-opencode-cloudops
         kubectl \
         kind \
    && ln -s /usr/bin/tofu /usr/local/bin/terraform
+   USER acoder
+
+FROM trusted-opencode-cloudops AS trusted-opencode-browser
+  USER root
+  RUN apk add --no-cache \
+        chromium \
+        chromium-chromedriver \
+        xvfb \
+        x11vnc \
+        font-noto \
+        font-noto-cjk \
+        font-noto-emoji
+  COPY opencode-browser-init /usr/local/bin/opencode-browser-init
+  RUN chmod 755 /usr/local/bin/opencode-browser-init
+  WORKDIR /home/acoder
   USER acoder
+  ENTRYPOINT ["/usr/local/bin/opencode-browser-init"]
+  CMD ["/bin/sh"]
 
 FROM ${JDK_IMAGE_REPO}:\$JDK_DEVEL_TAG AS trusted-opencode-devel
   RUN apk add --no-cache \

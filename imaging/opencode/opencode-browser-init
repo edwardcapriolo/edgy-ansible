@@ -1,0 +1,71 @@
+#!/bin/sh
+set -eu
+
+START_XVFB="${START_XVFB:-true}"
+START_VNC="${START_VNC:-false}"
+START_ROOTLESS_DOCKER="${START_ROOTLESS_DOCKER:-true}"
+export DISPLAY="${DISPLAY:-:99}"
+XVFB_SCREEN="${XVFB_SCREEN:-1920x1080x24}"
+VNC_PORT="${VNC_PORT:-5900}"
+VNC_BIND_ADDR="${VNC_BIND_ADDR:-0.0.0.0}"
+VNC_PASSWORD_FILE="${VNC_PASSWORD_FILE:-/tmp/x11vnc.pass}"
+
+xvfb_pid=""
+vnc_pid=""
+
+cleanup() {
+  [ -z "$vnc_pid" ] || kill "$vnc_pid" 2>/dev/null || true
+  [ -z "$xvfb_pid" ] || kill "$xvfb_pid" 2>/dev/null || true
+}
+
+trap cleanup EXIT INT TERM
+
+if [ "$START_XVFB" = "true" ]; then
+  Xvfb "$DISPLAY" -screen 0 "$XVFB_SCREEN" -nolisten tcp &
+  xvfb_pid=$!
+
+  display_number="${DISPLAY#:}"
+  i=0
+  while [ ! -S "/tmp/.X11-unix/X$display_number" ]; do
+    i=$((i + 1))
+    if ! kill -0 "$xvfb_pid" 2>/dev/null || [ "$i" -ge 30 ]; then
+      printf '%s\n' "Xvfb did not become ready on $DISPLAY" >&2
+      exit 1
+    fi
+    sleep 1
+  done
+fi
+
+if [ "$START_VNC" = "true" ]; then
+  if [ -n "${VNC_PASSWORD:-}" ]; then
+    x11vnc -storepasswd "$VNC_PASSWORD" "$VNC_PASSWORD_FILE" >/dev/null
+    chmod 600 "$VNC_PASSWORD_FILE"
+  fi
+
+  if [ ! -r "$VNC_PASSWORD_FILE" ]; then
+    printf '%s\n' "VNC requires VNC_PASSWORD or a readable VNC_PASSWORD_FILE" >&2
+    exit 1
+  fi
+
+  x11vnc \
+    -display "$DISPLAY" \
+    -rfbport "$VNC_PORT" \
+    -listen "$VNC_BIND_ADDR" \
+    -rfbauth "$VNC_PASSWORD_FILE" \
+    -forever \
+    -shared \
+    -noxdamage &
+  vnc_pid=$!
+fi
+
+if [ "$START_ROOTLESS_DOCKER" = "true" ]; then
+  export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/user-$(id -u)}"
+  export DOCKER_HOST="${DOCKER_HOST:-unix://$XDG_RUNTIME_DIR/docker.sock}"
+  /usr/local/bin/start-rootless-docker true
+fi
+
+if [ "$#" -eq 0 ]; then
+  set -- /bin/sh
+fi
+
+exec "$@"
